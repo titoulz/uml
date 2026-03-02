@@ -277,8 +277,11 @@ Pour toute question ou suggestion :
 
 **السلام عليكم ورحمة الله وبركاته**
 
-Made with ❤️ for the Maghreb community
+Made with ❤️ for the Maghreb community by THOMAS MICHELIN , TOM MARTIN , TITOUAN EL MOUAFIK
+
 
 🇩🇿 الجزائر | 🇲🇦 المغرب | 🇹🇳 تونس
 
 </div>
+
+
