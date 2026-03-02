@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="600" viewBox="0 0 900 600">
+  <!-- Rouge -->
+  <rect width="900" height="600" fill="#E70013"/>
+  <!-- Cercle blanc -->
+  <circle cx="450" cy="300" r="150" fill="#FFFFFF"/>
+  <!-- Croissant rouge -->
+  <g transform="translate(450, 300)">
+    <circle cx="0" cy="0" r="110" fill="#E70013"/>
+    <circle cx="25" cy="0" r="90" fill="#FFFFFF"/>
+    <!-- Étoile rouge -->
+    <path d="M 35,0 L 46,28 L 76,28 L 52,45 L 62,73 L 35,55 L 8,73 L 18,45 L -6,28 L 24,28 Z" fill="#E70013"/>
+  </g>
+</svg>

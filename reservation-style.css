@@ -1,0 +1,363 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    padding: 1rem;
+}
+
+.reservation-container {
+    width: 100%;
+    max-width: 900px;
+    margin: 2rem auto;
+}
+
+.reservation-box {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+}
+
+.reservation-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 2rem;
+    text-align: center;
+}
+
+.reservation-header h1 {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+.reservation-header p {
+    opacity: 0.9;
+    font-size: 0.95rem;
+}
+
+.reservation-content {
+    padding: 2rem;
+}
+
+.restaurant-info {
+    background: #f9f9f9;
+    padding: 1.5rem;
+    border-radius: 12px;
+    margin-bottom: 2rem;
+    border-left: 4px solid #667eea;
+}
+
+.restaurant-info h2 {
+    color: #333;
+    margin-bottom: 0.5rem;
+    font-size: 1.5rem;
+}
+
+.restaurant-info p {
+    color: #666;
+    margin-bottom: 0.5rem;
+}
+
+.type-badge {
+    display: inline-block;
+    background: #667eea;
+    color: white;
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.reservation-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    color: #444;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+}
+
+.required {
+    color: #d32f2f;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    padding: 0.875rem;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-family: inherit;
+    transition: all 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.form-hint {
+    display: block;
+    color: #999;
+    font-size: 0.85rem;
+    margin-top: 0.4rem;
+}
+
+.reservation-summary {
+    background: #f0f4ff;
+    padding: 1.5rem;
+    border-radius: 12px;
+    border: 2px solid #667eea;
+    margin-top: 1rem;
+}
+
+.reservation-summary h3 {
+    color: #667eea;
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+}
+
+.reservation-summary p {
+    color: #666;
+    line-height: 1.6;
+}
+
+#summary-content {
+    color: #333;
+}
+
+#summary-content p {
+    margin-bottom: 0.5rem;
+}
+
+#summary-content strong {
+    color: #667eea;
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.confirm-btn {
+    flex: 2;
+    padding: 1rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.confirm-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+}
+
+.confirm-btn:active {
+    transform: translateY(0);
+}
+
+.cancel-btn {
+    flex: 1;
+    padding: 1rem;
+    background: #f5f5f5;
+    color: #666;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.cancel-btn:hover {
+    background: #e0e0e0;
+}
+
+.back-link {
+    text-align: center;
+    padding: 1.5rem;
+    border-top: 1px solid #e0e0e0;
+}
+
+.back-link a {
+    color: #667eea;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.back-link a:hover {
+    text-decoration: underline;
+}
+
+.success-message {
+    background: #e8f5e9;
+    color: #2e7d32;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    border-left: 4px solid #4caf50;
+}
+
+.error-message {
+    background: #ffebee;
+    color: #c62828;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    border-left: 4px solid #f44336;
+}
+
+@media (max-width: 768px) {
+    .reservation-header h1 {
+        font-size: 1.5rem;
+    }
+
+    .reservation-content {
+        padding: 1.5rem 1rem;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .form-actions {
+        flex-direction: column;
+    }
+}
+
+/* SERVICE TYPE SECTION */
+.service-type-section {
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    background: linear-gradient(135deg, #f8f5f0 0%, #ffffff 100%);
+    border-radius: 15px;
+    border: 3px solid #D4AF37;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.service-type-section h3 {
+    color: #C1272D;
+    font-size: 1.3rem;
+    margin-bottom: 0.5rem;
+    font-weight: 700;
+}
+
+.service-type-section .section-description {
+    color: #666;
+    font-size: 0.9rem;
+    margin-bottom: 1.5rem;
+}
+
+.service-type-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+}
+
+.service-option {
+    cursor: pointer;
+}
+
+.service-option input[type="radio"] {
+    display: none;
+}
+
+.option-card {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.5rem;
+    background: white;
+    border: 3px solid #e0e0e0;
+    border-radius: 15px;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.option-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 20px rgba(212, 175, 55, 0.3);
+    border-color: #D4AF37;
+}
+
+.service-option input[type="radio"]:checked + .option-card {
+    background: linear-gradient(135deg, #006233 0%, #008844 100%);
+    border-color: #D4AF37;
+    box-shadow: 0 6px 20px rgba(0, 98, 51, 0.4);
+}
+
+.service-option input[type="radio"]:checked + .option-card .option-icon {
+    transform: scale(1.2);
+    filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.8));
+}
+
+.service-option input[type="radio"]:checked + .option-card .option-text h4,
+.service-option input[type="radio"]:checked + .option-card .option-text p {
+    color: white;
+}
+
+.option-icon {
+    font-size: 3rem;
+    transition: all 0.3s ease;
+}
+
+.option-text h4 {
+    font-size: 1.1rem;
+    color: #C1272D;
+    margin-bottom: 0.3rem;
+    font-weight: 700;
+}
+
+.option-text p {
+    font-size: 0.85rem;
+    color: #666;
+    font-style: italic;
+}
+
+@media (max-width: 768px) {
+    .service-type-options {
+        grid-template-columns: 1fr;
+    }
+}

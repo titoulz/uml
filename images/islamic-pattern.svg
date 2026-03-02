@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200">
+  <defs>
+    <pattern id="islamicPattern" x="0" y="0" width="200" height="200" patternUnits="userSpaceOnUse">
+      <rect width="200" height="200" fill="#f8f5f0"/>
+      <!-- Motif étoile à 8 branches -->
+      <g transform="translate(100, 100)">
+        <path d="M 0,-40 L 10,-10 L 40,0 L 10,10 L 0,40 L -10,10 L -40,0 L -10,-10 Z"
+              fill="none" stroke="#D4AF37" stroke-width="2" opacity="0.3"/>
+        <circle cx="0" cy="0" r="8" fill="none" stroke="#D4AF37" stroke-width="1.5" opacity="0.3"/>
+        <circle cx="0" cy="0" r="15" fill="none" stroke="#006233" stroke-width="1" opacity="0.2"/>
+        <circle cx="0" cy="0" r="25" fill="none" stroke="#C1272D" stroke-width="1" opacity="0.2"/>
+      </g>
+    </pattern>
+  </defs>
+  <rect width="200" height="200" fill="url(#islamicPattern)"/>
+</svg>

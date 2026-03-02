@@ -1,0 +1,179 @@
+@startuml Diagramme de Classes - Restaurants Halal
+
+title Diagramme de Classes - Système de Réservation
+
+' Classes principales
+class User {
+    - id: int
+    - name: string
+    - email: string
+    - password: string
+    - role: string
+    - restaurantId: int
+    - createdAt: datetime
+    + login(): boolean
+    + logout(): void
+    + updateProfile(): boolean
+    + deleteAccount(): void
+}
+
+class Client {
+    - favoriteRestaurants: array
+    + viewRestaurants(): array
+    + makeReservation(): Reservation
+    + viewMyReservations(): array
+    + cancelReservation(id: int): boolean
+}
+
+class Restaurant {
+    - id: int
+    - name: string
+    - address: string
+    - type: string
+    - phone: string
+    - lat: float
+    - lng: float
+    - certificationHalal: boolean
+    + getDetails(): object
+    + getReservations(): array
+    + updateAvailability(): void
+}
+
+class RestaurantOwner {
+    - managedRestaurantId: int
+    + viewReservations(): array
+    + acceptReservation(id: int): boolean
+    + refuseReservation(id: int): boolean
+    + viewStatistics(): object
+    + filterReservations(status: string): array
+}
+
+class Reservation {
+    - id: int
+    - userId: int
+    - restaurantId: int
+    - restaurantName: string
+    - restaurantAddress: string
+    - date: date
+    - time: string
+    - guests: int
+    - guestName: string
+    - guestPhone: string
+    - guestEmail: string
+    - specialRequests: string
+    - status: string
+    - createdAt: datetime
+    - statusUpdatedAt: datetime
+    + create(): boolean
+    + updateStatus(status: string): boolean
+    + cancel(): boolean
+    + getDetails(): object
+}
+
+class Session {
+    - userId: int
+    - userName: string
+    - userEmail: string
+    - userRole: string
+    - restaurantId: int
+    - isLoggedIn: boolean
+    - loginTime: datetime
+    + create(user: User, rememberMe: boolean): void
+    + destroy(): void
+    + getCurrentUser(): object
+    + isValid(): boolean
+}
+
+class UserDatabase {
+    - users: array
+    + getAllUsers(): array
+    + findUserById(id: int): User
+    + findUserByEmail(email: string): User
+    + addUser(userData: object): User
+    + updateUser(id: int, userData: object): boolean
+    + deleteUser(id: int): boolean
+    + validateCredentials(email: string, password: string): User
+}
+
+class ReservationManager {
+    - reservations: array
+    + getAllReservations(): array
+    + getUserReservations(userId: int): array
+    + getRestaurantReservations(restaurantId: int): array
+    + addReservation(data: object): Reservation
+    + updateReservationStatus(id: int, status: string): boolean
+    + deleteReservation(id: int): boolean
+}
+
+class MapService {
+    - map: object
+    - markers: array
+    + initializeMap(lat: float, lng: float): void
+    + addMarker(restaurant: Restaurant): void
+    + centerOn(lat: float, lng: float): void
+    + showPopup(restaurantId: int): void
+}
+
+class CertificationHalal {
+    - certified: boolean
+    - certificationBody: string
+    - certificationDate: date
+    + verify(): boolean
+    + getBadge(): string
+    + getDetails(): object
+}
+
+' Énumérations
+enum UserRole {
+    CLIENT
+    RESTAURANT
+}
+
+enum ReservationStatus {
+    PENDING
+    CONFIRMED
+    REFUSED
+    CANCELLED
+}
+
+' Relations d'héritage
+User <|-- Client
+User <|-- RestaurantOwner
+
+' Relations d'association
+Client "1" -- "0..*" Reservation : crée >
+RestaurantOwner "1" -- "1" Restaurant : gère >
+RestaurantOwner "1" -- "0..*" Reservation : traite >
+Restaurant "1" -- "0..*" Reservation : reçoit >
+Restaurant "1" *-- "1" CertificationHalal : possède >
+
+' Relations de dépendance
+Session ..> User : utilise
+UserDatabase ..> User : stocke
+ReservationManager ..> Reservation : gère
+MapService ..> Restaurant : affiche
+
+' Relations de composition
+User *-- UserRole
+Reservation *-- ReservationStatus
+
+note right of CertificationHalal
+  Tous les restaurants doivent
+  avoir une certification Halal
+  valide pour être listés
+end note
+
+note bottom of Reservation
+  Statuts possibles:
+  - pending: en attente
+  - confirmed: acceptée par le restaurant
+  - refused: refusée par le restaurant
+  - cancelled: annulée par le client
+end note
+
+note top of UserRole
+  CLIENT: peut réserver
+  RESTAURANT: peut gérer les réservations
+end note
+
+@enduml

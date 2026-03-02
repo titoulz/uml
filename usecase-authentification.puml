@@ -1,0 +1,33 @@
+@startuml
+!theme plain
+
+actor "Utilisateur" as Client
+actor "Serveur Mail" as Mail
+actor "Prestataire SMS" as SMS
+
+rectangle "Système d'Authentification Centralisé" {
+  (Créer un compte) as UC1
+  (Se connecter) as UC2
+  (Mot de passe oublié) as UC3
+  (Modifier paramètres) as UC4
+  (Se déconnecter) as UC5
+  (Vérifier format MDP) as UC_Sec
+  (Authentification 2FA SMS) as UC_2FA
+
+  Client -- UC1
+  Client -- UC2
+  Client -- UC3
+  Client -- UC4
+  Client -- UC5
+
+  UC1 ..> UC_Sec : <<include>>
+  UC2 <.. UC_2FA : <<extend>>
+
+  UC4 ..> UC2 : <<include>>
+  UC5 ..> UC2 : <<include>>
+
+  UC1 -- Mail : "Envoi lien"
+  UC_2FA -- SMS : "Envoi code"
+}
+
+@enduml

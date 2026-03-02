@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mon Profil - Restaurants Halal</title>
+    <link rel="stylesheet" href="profile-style.css">
+</head>
+<body>
+    <div class="profile-container">
+        <div class="profile-box">
+            <div class="profile-header">
+                <h1>👤 Mon Profil</h1>
+                <p>Gérez vos informations personnelles</p>
+            </div>
+
+            <div class="profile-content">
+                <form id="profile-form" class="profile-form">
+                    <div class="form-section">
+                        <h2>Informations personnelles</h2>
+
+                        <div class="form-group">
+                            <label for="profile-name">Nom complet</label>
+                            <input type="text" id="profile-name" placeholder="Jean Dupont" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="profile-email">Email</label>
+                            <input type="email" id="profile-email" placeholder="votre.email@exemple.com" required>
+                            <small class="form-hint">L'email sera utilisé pour vous connecter</small>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h2>Changer le mot de passe</h2>
+                        <p class="section-description">Laissez vide pour conserver votre mot de passe actuel</p>
+
+                        <div class="form-group">
+                            <label for="current-password">Mot de passe actuel</label>
+                            <input type="password" id="current-password" placeholder="••••••••">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="new-password">Nouveau mot de passe</label>
+                            <input type="password" id="new-password" placeholder="••••••••">
+                            <small class="form-hint">Minimum 6 caractères</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="confirm-password">Confirmer le nouveau mot de passe</label>
+                            <input type="password" id="confirm-password" placeholder="••••••••">
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="save-btn">Enregistrer les modifications</button>
+                        <a href="index.html" class="cancel-btn">Annuler</a>
+                    </div>
+                </form>
+
+                <div class="danger-zone">
+                    <h3>Zone de danger</h3>
+                    <p>La suppression de votre compte est définitive et irréversible.</p>
+                    <button class="delete-btn" id="delete-account-btn">Supprimer mon compte</button>
+                </div>
+            </div>
+
+            <div class="back-link">
+                <a href="index.html">← Retour à l'accueil</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="profile-script.js"></script>
+</body>
+</html>

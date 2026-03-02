@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Réservation - Restaurants Halal</title>
+    <link rel="stylesheet" href="reservation-style.css">
+</head>
+<body>
+    <div class="reservation-container">
+        <div class="reservation-box">
+            <div class="reservation-header">
+                <h1>📅 Réserver une table</h1>
+                <p>Réservez votre table en quelques clics</p>
+            </div>
+
+            <div class="reservation-content">
+                <div class="restaurant-info" id="restaurant-info">
+                    <h2 id="restaurant-name">Chargement...</h2>
+                    <p id="restaurant-address"></p>
+                    <span id="restaurant-type" class="type-badge"></span>
+                </div>
+
+                <form id="reservation-form" class="reservation-form">
+                    <!-- Choix du type de service -->
+                    <div class="service-type-section">
+                        <h3>📦 Type de service <span class="required">*</span></h3>
+                        <p class="section-description">Choisissez votre mode de restauration</p>
+
+                        <div class="service-type-options">
+                            <label class="service-option">
+                                <input type="radio" name="service-type" value="takeaway" required>
+                                <div class="option-card">
+                                    <div class="option-icon">🥡</div>
+                                    <div class="option-text">
+                                        <h4>À emporter</h4>
+                                        <p>Ailleurs que là-bas</p>
+                                    </div>
+                                </div>
+                            </label>
+
+                            <label class="service-option">
+                                <input type="radio" name="service-type" value="dine-in" required>
+                                <div class="option-card">
+                                    <div class="option-icon">🪑</div>
+                                    <div class="option-text">
+                                        <h4>Sur place</h4>
+                                        <p>Ici pas sur place</p>
+                                    </div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="reservation-date">Date <span class="required">*</span></label>
+                            <input type="date" id="reservation-date" required>
+                            <small class="form-hint">Choisissez la date de votre réservation</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="reservation-time">Heure <span class="required">*</span></label>
+                            <select id="reservation-time" required>
+                                <option value="">Sélectionnez une heure</option>
+                                <option value="11:00">11:00</option>
+                                <option value="11:30">11:30</option>
+                                <option value="12:00">12:00</option>
+                                <option value="12:30">12:30</option>
+                                <option value="13:00">13:00</option>
+                                <option value="13:30">13:30</option>
+                                <option value="14:00">14:00</option>
+                                <option value="19:00">19:00</option>
+                                <option value="19:30">19:30</option>
+                                <option value="20:00">20:00</option>
+                                <option value="20:30">20:30</option>
+                                <option value="21:00">21:00</option>
+                                <option value="21:30">21:30</option>
+                                <option value="22:00">22:00</option>
+                                <option value="22:30">22:30</option>
+                            </select>
+                            <small class="form-hint">Horaires de service</small>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="num-guests">Nombre de personnes <span class="required">*</span></label>
+                            <select id="num-guests" required>
+                                <option value="">Sélectionnez</option>
+                                <option value="1">1 personne</option>
+                                <option value="2">2 personnes</option>
+                                <option value="3">3 personnes</option>
+                                <option value="4">4 personnes</option>
+                                <option value="5">5 personnes</option>
+                                <option value="6">6 personnes</option>
+                                <option value="7">7 personnes</option>
+                                <option value="8">8 personnes</option>
+                                <option value="9">9 personnes</option>
+                                <option value="10">10 personnes</option>
+                                <option value="10+">Plus de 10 personnes</option>
+                            </select>
+                            <small class="form-hint">Nombre de couverts</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="guest-name">Nom du réservant <span class="required">*</span></label>
+                            <input type="text" id="guest-name" placeholder="Votre nom" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="guest-phone">Téléphone <span class="required">*</span></label>
+                            <input type="tel" id="guest-phone" placeholder="06 12 34 56 78" required>
+                            <small class="form-hint">Pour vous contacter si nécessaire</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="guest-email">Email <span class="required">*</span></label>
+                            <input type="email" id="guest-email" placeholder="votre@email.com" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="special-requests">Demandes spéciales</label>
+                        <textarea id="special-requests" rows="4" placeholder="Allergies, régimes alimentaires, occasion spéciale, préférences de placement..."></textarea>
+                        <small class="form-hint">Optionnel - Toute information utile pour le restaurant</small>
+                    </div>
+
+                    <div class="reservation-summary">
+                        <h3>📋 Récapitulatif</h3>
+                        <div id="summary-content">
+                            <p>Veuillez remplir le formulaire pour voir le récapitulatif</p>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="confirm-btn">Confirmer la réservation</button>
+                        <a href="index.html" class="cancel-btn">Annuler</a>
+                    </div>
+                </form>
+            </div>
+
+            <div class="back-link">
+                <a href="index.html">← Retour à l'accueil</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="reservation-script.js"></script>
+</body>
+</html>

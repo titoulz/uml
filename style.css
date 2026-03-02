@@ -1,0 +1,461 @@
+/* Import police arabe */
+@import url('https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@400;600;700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Cairo', 'Segoe UI', sans-serif;
+    background: #f8f5f0 url('images/islamic-pattern.svg');
+    background-attachment: fixed;
+}
+
+/* HEADER - Style Maghrébin */
+header {
+    background:
+        linear-gradient(135deg, rgba(0, 98, 51, 0.7) 0%, rgba(193, 39, 45, 0.7) 100%),
+        url('images/mosque-banner.jpg') center/cover no-repeat;
+    color: white;
+    padding: 2.5rem 2rem;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+    position: relative;
+    border-bottom: 5px solid #D4AF37;
+}
+
+header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background:
+        repeating-linear-gradient(
+            45deg,
+            transparent,
+            transparent 10px,
+            rgba(212, 175, 55, 0.05) 10px,
+            rgba(212, 175, 55, 0.05) 20px
+        );
+    pointer-events: none;
+}
+
+.header-content {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+}
+
+header h1 {
+    font-family: 'Amiri', serif;
+    font-size: 3rem;
+    margin-bottom: 0.5rem;
+    text-shadow:
+        3px 3px 10px rgba(0, 0, 0, 0.9),
+        0 0 30px rgba(212, 175, 55, 0.7);
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+header h1::before {
+    content: '☪️ ';
+    margin-right: 10px;
+}
+
+header p {
+    font-family: 'Cairo', sans-serif;
+    font-size: 1.2rem;
+    opacity: 0.98;
+    text-shadow:
+        2px 2px 8px rgba(0, 0, 0, 0.9),
+        0 0 20px rgba(212, 175, 55, 0.6);
+    font-weight: 500;
+}
+
+/* Bandeau drapeaux */
+.flags-banner {
+    background: linear-gradient(90deg, #006233 0%, #C1272D 50%, #E70013 100%);
+    padding: 0.5rem 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 3rem;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    border-top: 2px solid #D4AF37;
+    border-bottom: 2px solid #D4AF37;
+}
+
+.flags-banner img {
+    height: 40px;
+    border: 2px solid white;
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+    transition: transform 0.3s ease;
+}
+
+.flags-banner img:hover {
+    transform: scale(1.2) rotate(5deg);
+}
+
+.header-right {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.nav-links {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.nav-link {
+    background: rgba(212, 175, 55, 0.9);
+    color: white;
+    padding: 0.85rem 1.8rem;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: 700;
+    transition: all 0.3s ease;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+}
+
+.nav-link:hover {
+    background: #D4AF37;
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 6px 20px rgba(212, 175, 55, 0.5);
+}
+
+.auth-buttons {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.auth-btn {
+    background: white;
+    color: #C1272D;
+    padding: 0.85rem 1.8rem;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: 700;
+    transition: all 0.3s ease;
+    border: 3px solid #D4AF37;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+}
+
+.auth-btn:hover {
+    background: #D4AF37;
+    color: white;
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 6px 20px rgba(212, 175, 55, 0.6);
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.user-name {
+    font-size: 1rem;
+    font-weight: 600;
+    padding: 0.5rem 1rem;
+    background: rgba(212, 175, 55, 0.8);
+    border-radius: 20px;
+    border: 2px solid white;
+}
+
+.user-name-link {
+    font-size: 1rem;
+    font-weight: 700;
+    padding: 0.7rem 1.5rem;
+    background: rgba(212, 175, 55, 0.9);
+    border-radius: 25px;
+    color: white;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+}
+
+.user-name-link:hover {
+    background: #D4AF37;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(212, 175, 55, 0.5);
+}
+
+.logout-btn {
+    background: rgba(193, 39, 45, 0.9);
+    color: white;
+    padding: 0.85rem 1.8rem;
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    border-radius: 25px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+}
+
+.logout-btn:hover {
+    background: #C1272D;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(193, 39, 45, 0.5);
+}
+
+/* CONTAINER */
+.container {
+    display: flex;
+    max-width: 1400px;
+    margin: 2rem auto;
+    gap: 1.5rem;
+    padding: 0 1rem;
+}
+
+/* SIDEBAR */
+.sidebar {
+    flex: 0 0 380px;
+    background: white;
+    padding: 2rem 1.5rem;
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    max-height: 600px;
+    overflow-y: auto;
+    border: 3px solid #D4AF37;
+    position: relative;
+}
+
+.sidebar::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 5px;
+    background: linear-gradient(90deg, #006233 0%, #C1272D 50%, #E70013 100%);
+}
+
+.sidebar h2 {
+    font-family: 'Amiri', serif;
+    color: #C1272D;
+    margin-bottom: 1.5rem;
+    font-size: 1.8rem;
+    text-align: center;
+    padding-bottom: 1rem;
+    border-bottom: 3px solid #D4AF37;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+}
+
+.sidebar h2::before {
+    content: '🕌 ';
+}
+
+/* RESTAURANT CARDS */
+.restaurant-card {
+    background: linear-gradient(135deg, #ffffff 0%, #f8f5f0 100%);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    border-radius: 12px;
+    border-left: 5px solid #006233;
+    border-right: 5px solid #C1272D;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.restaurant-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 100px;
+    height: 100px;
+    background: url('images/islamic-pattern.svg');
+    opacity: 0.1;
+    pointer-events: none;
+}
+
+.restaurant-card:hover {
+    transform: translateX(8px) scale(1.02);
+    box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4);
+    border-left-color: #D4AF37;
+    border-right-color: #D4AF37;
+}
+
+.restaurant-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.8rem;
+}
+
+.restaurant-card-header h3 {
+    font-family: 'Cairo', sans-serif;
+    color: #C1272D;
+    font-size: 1.3rem;
+    margin: 0;
+    flex: 1;
+    font-weight: 700;
+}
+
+.halal-badge {
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+    margin-left: 0.5rem;
+    filter: drop-shadow(0 3px 6px rgba(0, 107, 63, 0.3));
+    transition: transform 0.3s ease;
+}
+
+.halal-badge:hover {
+    transform: scale(1.2) rotate(10deg);
+}
+
+.restaurant-card h3 {
+    color: #333;
+    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+}
+
+.restaurant-card p {
+    color: #555;
+    font-size: 0.95rem;
+    margin-bottom: 0.5rem;
+}
+
+.restaurant-type {
+    display: inline-block;
+    background: linear-gradient(135deg, #006233 0%, #008844 100%);
+    color: white;
+    padding: 0.4rem 1rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    margin-top: 0.5rem;
+    font-weight: 600;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.reserve-btn {
+    width: 100%;
+    margin-top: 1rem;
+    padding: 0.9rem;
+    background: linear-gradient(135deg, #C1272D 0%, #E70013 100%);
+    color: white;
+    border: none;
+    border-radius: 25px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(193, 39, 45, 0.3);
+    border: 2px solid #D4AF37;
+}
+
+.reserve-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(193, 39, 45, 0.5);
+    background: linear-gradient(135deg, #E70013 0%, #C1272D 100%);
+}
+
+/* MAP CONTAINER */
+.map-container {
+    flex: 1;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    overflow: hidden;
+    border: 3px solid #D4AF37;
+    position: relative;
+}
+
+.map-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 5px;
+    background: linear-gradient(90deg, #006233 0%, #C1272D 50%, #E70013 100%);
+    z-index: 1000;
+}
+
+#map {
+    height: 600px;
+    width: 100%;
+}
+
+/* FOOTER */
+footer {
+    text-align: center;
+    padding: 2.5rem;
+    background: linear-gradient(135deg, #006233 0%, #C1272D 100%);
+    color: white;
+    font-weight: 600;
+    font-size: 1.1rem;
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.2);
+    border-top: 5px solid #D4AF37;
+}
+
+footer::before {
+    content: '☪️ ';
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+    header h1 {
+        font-size: 2rem;
+    }
+
+    .flags-banner {
+        gap: 1.5rem;
+    }
+
+    .flags-banner img {
+        height: 30px;
+    }
+
+    .container {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        flex: 1;
+        max-height: 400px;
+    }
+
+    #map {
+        height: 400px;
+    }
+}
+
+/* LEAFLET POPUP CUSTOMIZATION */
+.leaflet-popup-content-wrapper {
+    border-radius: 15px !important;
+    border: 3px solid #D4AF37 !important;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.3) !important;
+    overflow: hidden;
+}
+
+.leaflet-popup-content {
+    margin: 15px !important;
+    font-family: 'Cairo', Arial, sans-serif !important;
+}
+
+.leaflet-popup-tip {
+    border-top-color: #D4AF37 !important;
+}
+
+.leaflet-popup a:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 5px 15px rgba(193, 39, 45, 0.5) !important;
+}

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gérer les Réservations - Restaurants Halal</title>
+    <link rel="stylesheet" href="manage-reservations-style.css">
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <div>
+                <h1>🍽️ Gestion des Réservations</h1>
+                <p id="restaurant-name-header">Chargement...</p>
+            </div>
+            <div class="header-actions">
+                <a href="index.html" class="btn-secondary">← Retour</a>
+                <a href="profile.html" class="btn-primary">Mon profil</a>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <div class="stats-section">
+                <div class="stat-card">
+                    <div class="stat-icon">⏳</div>
+                    <div class="stat-info">
+                        <h3 id="pending-count">0</h3>
+                        <p>En attente</p>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">✅</div>
+                    <div class="stat-info">
+                        <h3 id="confirmed-count">0</h3>
+                        <p>Confirmées</p>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">❌</div>
+                    <div class="stat-info">
+                        <h3 id="refused-count">0</h3>
+                        <p>Refusées</p>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">📊</div>
+                    <div class="stat-info">
+                        <h3 id="total-count">0</h3>
+                        <p>Total</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="filters-section">
+                <button class="filter-btn active" data-filter="all">Toutes</button>
+                <button class="filter-btn" data-filter="pending">En attente</button>
+                <button class="filter-btn" data-filter="confirmed">Confirmées</button>
+                <button class="filter-btn" data-filter="refused">Refusées</button>
+            </div>
+
+            <div class="reservations-section">
+                <div class="section-header">
+                    <h2>📋 Réservations</h2>
+                </div>
+                <div id="reservations-list" class="reservations-list">
+                    <p class="empty-message">Aucune réservation</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 Restaurants Halal - Données fictives</p>
+    </footer>
+
+    <script src="manage-reservations-script.js"></script>
+</body>
+</html>

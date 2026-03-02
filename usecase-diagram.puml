@@ -1,0 +1,89 @@
+@startuml Diagramme de Cas d'Utilisation - Restaurants Halal
+
+title Système de Réservation de Restaurants Halal
+
+left to right direction
+
+actor "Client" as client
+actor "Restaurant" as restaurant
+actor "Système" as system
+
+rectangle "Application Restaurants Halal" {
+    ' Cas d'utilisation - Authentification
+    usecase "S'inscrire" as UC1
+    usecase "Se connecter" as UC2
+    usecase "Se déconnecter" as UC3
+    usecase "Gérer profil" as UC4
+
+    ' Cas d'utilisation - Client
+    usecase "Consulter restaurants" as UC5
+    usecase "Voir carte interactive" as UC6
+    usecase "Filtrer par type" as UC7
+    usecase "Réserver une table" as UC8
+    usecase "Voir mes réservations" as UC9
+    usecase "Annuler réservation" as UC10
+
+    ' Cas d'utilisation - Restaurant
+    usecase "Voir réservations reçues" as UC11
+    usecase "Accepter réservation" as UC12
+    usecase "Refuser réservation" as UC13
+    usecase "Filtrer réservations" as UC14
+    usecase "Voir statistiques" as UC15
+
+    ' Cas d'utilisation système
+    usecase "Vérifier certification Halal" as UC16
+    usecase "Gérer base de données" as UC17
+}
+
+' Relations Client
+client --> UC1
+client --> UC2
+client --> UC3
+client --> UC4
+client --> UC5
+client --> UC6
+client --> UC7
+client --> UC8
+client --> UC9
+client --> UC10
+
+' Relations Restaurant
+restaurant --> UC1
+restaurant --> UC2
+restaurant --> UC3
+restaurant --> UC4
+restaurant --> UC11
+restaurant --> UC12
+restaurant --> UC13
+restaurant --> UC14
+restaurant --> UC15
+
+' Relations Système
+system --> UC16
+system --> UC17
+
+' Extensions et inclusions
+UC1 ..> UC2 : <<include>>
+UC8 ..> UC2 : <<require>>
+UC5 ..> UC16 : <<include>>
+UC6 ..> UC5 : <<extend>>
+UC7 ..> UC5 : <<extend>>
+UC11 ..> UC14 : <<extend>>
+UC11 ..> UC15 : <<include>>
+
+note right of UC8
+  Le client doit être connecté
+  pour effectuer une réservation
+end note
+
+note right of UC12
+  La réservation passe en statut
+  "confirmée" et le client est notifié
+end note
+
+note left of UC16
+  Tous les restaurants affichent
+  leur certification Halal
+end note
+
+@enduml
