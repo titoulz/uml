@@ -264,44 +264,35 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19
 }).addTo(map);
 
-// Icône personnalisée pour les marqueurs - Style Maghrébin
-const customIcon = L.icon({
-    iconUrl: 'images/marker-maghreb.svg',
-    iconSize: [32, 40],
-    iconAnchor: [16, 40],
-    popupAnchor: [0, -40]
-});
+// Utilisation des marqueurs par défaut de Leaflet
 
 // Stockage des marqueurs
 const markers = {};
 
 // Ajout des restaurants sur la carte
 restaurants.forEach(restaurant => {
-    const marker = L.marker([restaurant.lat, restaurant.lng], { icon: customIcon })
+    const marker = L.marker([restaurant.lat, restaurant.lng])
         .addTo(map)
         .bindPopup(`
-            <div style="font-family: 'Cairo', Arial, sans-serif; min-width: 250px;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                    <h3 style="color: #C1272D; margin: 0; font-weight: 700; font-size: 1.2rem;">${restaurant.name}</h3>
-                    <img src="images/certification-halal.svg" alt="Certifié Halal" style="width: 35px; height: 35px;" title="Certifié Halal">
-                </div>
-                <p style="margin: 6px 0; color: #555; font-size: 0.9rem;"><strong style="color: #006233;">📍 Adresse:</strong> ${restaurant.address}</p>
-                <p style="margin: 6px 0; color: #555; font-size: 0.9rem;"><strong style="color: #006233;">🍽️ Type:</strong> ${restaurant.type}</p>
-                <p style="margin: 6px 0; color: #555; font-size: 0.9rem;"><strong style="color: #006233;">📞 Tél:</strong> ${restaurant.phone}</p>
-                <div style="margin: 10px 0; padding: 8px; background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%); border-radius: 8px; border-left: 4px solid #006233;">
-                    <p style="margin: 0; font-size: 0.85em; color: #2e7d32; font-weight: 600;">
-                        ✅ مطعم حلال معتمد | Restaurant certifié Halal
+            <div style="font-family: 'Segoe UI', Arial, sans-serif; min-width: 250px;">
+                <h3 style="color: #667eea; margin: 0 0 10px 0; font-weight: 700; font-size: 1.2rem;">${restaurant.name}</h3>
+                <p style="margin: 6px 0; color: #555; font-size: 0.9rem;"><strong style="color: #667eea;">📍 Adresse:</strong> ${restaurant.address}</p>
+                <p style="margin: 6px 0; color: #555; font-size: 0.9rem;"><strong style="color: #667eea;">🍽️ Type:</strong> ${restaurant.type}</p>
+                <p style="margin: 6px 0; color: #555; font-size: 0.9rem;"><strong style="color: #667eea;">📞 Tél:</strong> ${restaurant.phone}</p>
+                <div style="margin: 10px 0; padding: 8px; background: #f0f0f0; border-radius: 8px; border-left: 4px solid #667eea;">
+                    <p style="margin: 0; font-size: 0.85em; color: #667eea; font-weight: 600;">
+                        ✅ Restaurant certifié Halal
                     </p>
                 </div>
                 <a href="reservation.html?id=${restaurant.id}"
                    onclick="playReservationSound();"
                    style="display: block; margin-top: 12px; padding: 10px 20px;
-                          background: linear-gradient(135deg, #C1272D 0%, #E70013 100%);
+                          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
                           color: white; text-align: center; text-decoration: none;
-                          border-radius: 25px; font-weight: 700; font-size: 1rem;
-                          border: 2px solid #D4AF37; box-shadow: 0 3px 8px rgba(193, 39, 45, 0.3);
+                          border-radius: 8px; font-weight: 600; font-size: 1rem;
+                          box-shadow: 0 3px 8px rgba(102, 126, 234, 0.3);
                           transition: all 0.3s ease;">
-                    📅 احجز الآن | Réserver
+                    📅 Réserver
                 </a>
             </div>
         `);
@@ -316,21 +307,18 @@ restaurants.forEach(restaurant => {
     const card = document.createElement('div');
     card.className = 'restaurant-card';
     card.innerHTML = `
-        <div class="restaurant-card-header">
-            <h3>${restaurant.name}</h3>
-            <img src="images/certification-halal.svg" alt="Certifié Halal" class="halal-badge" title="Restaurant certifié Halal">
-        </div>
+        <h3>${restaurant.name}</h3>
         <p><strong>📍</strong> ${restaurant.address}</p>
         <p><strong>📞</strong> ${restaurant.phone}</p>
-        <span class="restaurant-type">${restaurant.type}</span>
-        <button class="reserve-btn" onclick="event.stopPropagation(); playReservationSound(); setTimeout(() => { window.location.href='reservation.html?id=${restaurant.id}'; }, 500);">
-            📅 احجز الآن | Réserver
-        </button>
+        <span class="cuisine-type">${restaurant.type}</span>
+        <a href="reservation.html?id=${restaurant.id}" class="reserve-btn" onclick="event.stopPropagation(); playReservationSound();">
+            📅 Réserver
+        </a>
     `;
 
     // Au clic sur une carte, centrer la carte et ouvrir le popup
     card.addEventListener('click', () => {
-        map.setView([restaurant.lat, restaurant.lng], 13);
+        map.setView([restaurant.lat, restaurant.lng], 15);
         markers[restaurant.id].openPopup();
     });
 
