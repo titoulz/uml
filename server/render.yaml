@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: allo-halal-api
+    env: node
+    buildCommand: npm install
+    startCommand: node init-db.js && node server.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3001
