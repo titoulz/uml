@@ -1,0 +1,9 @@
+node_modules
+server
+*.db
+*.sqlite
+*.sqlite3
+diagramme/*.puml
+documentation-standalone
+Documentation-Allo-Halal.zip
+.git
