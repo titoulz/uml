@@ -1,6 +1,6 @@
 // Configuration de l'API
 const API_CONFIG = {
-    BASE_URL: 'http://localhost:3001/api',
+    BASE_URL: 'https://allo-halal-api.onrender.com/api',
 
     // Endpoints
     ENDPOINTS: {
