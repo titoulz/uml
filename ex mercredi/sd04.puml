@@ -1,0 +1,47 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam ParticipantPadding 20
+skinparam BoxPadding 8
+skinparam roundcorner 4
+skinparam sequenceGroupBorderColor #1e6fa0
+skinparam sequenceGroupBackgroundColor #e8f4f8
+
+title SD 04 — Suppression d'un client
+
+actor Utilisateur
+participant ":Banque" as Banque
+participant ":Client" as Client
+participant ":Compte" as Compte
+
+Utilisateur -> Banque : SuppressionClient(c : Client)
+activate Banque
+
+Banque -> Client : SoldeTotal()
+activate Client
+
+loop pour chaque Compte du Client
+    Client -> Compte : getSolde()
+    activate Compte
+    Compte --> Client : solde : double
+    deactivate Compte
+end
+
+Client --> Banque : soldeTotal : double
+deactivate Client
+
+alt [soldeTotal == 0 → tous les comptes sont soldés]
+    loop pour chaque Compte du Client
+        Banque -> Compte : <<destroy>>
+        destroy Compte
+    end
+    Banque -> Client : <<destroy>>
+    destroy Client
+    Banque --> Utilisateur : ok
+else [soldeTotal ≠ 0 → au moins un compte non soldé]
+    Banque --> Utilisateur : Erreur : comptes non soldés
+end
+
+deactivate Banque
+
+note over Banque : SoldeTotal() agrège les soldes de tous\nles comptes du client. Si nul, comptes\npuis client sont détruits dans cet ordre.
+@enduml

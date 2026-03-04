@@ -1,0 +1,66 @@
+@startuml
+title Diagramme de séquence - Annulation d'une réservation (Client)
+
+actor "Client" as C
+participant "Interface Web" as IW
+participant "SessionManager" as SM
+participant "API Backend" as API
+participant "Base de données" as DB
+
+== Annulation d'une réservation par le client ==
+C -> IW : AccèsMesRéservations()
+activate IW
+
+IW -> SM : getCurrentUser()
+activate SM
+SM --> IW : user
+deactivate SM
+
+alt Utilisateur non connecté
+  IW --> C : Redirection vers auth.html
+else Utilisateur connecté
+  IW -> API : GET /api/reservations/user/{userId}
+  activate API
+  API -> DB : SELECT r.*, rest.name, rest.address FROM reservations r JOIN restaurants rest WHERE r.user_id = ?
+  activate DB
+  DB --> API : reservations[]
+  deactivate DB
+  API --> IW : reservations[]
+  deactivate API
+
+  IW --> C : AfficherListeRéservations(reservations)
+
+  C -> IW : ClicAnnulerRéservation(reservationId)
+  IW --> C : Confirmation("Êtes-vous sûr de vouloir annuler cette réservation ?")
+
+  alt Client refuse
+    IW --> C : Annulation abandonnée
+  else Client confirme
+    IW -> API : DELETE /api/reservations/{reservationId}
+    activate API
+
+    API -> DB : UPDATE reservations SET status = 'cancelled', updated_at = CURRENT_TIMESTAMP WHERE id = ?
+    activate DB
+    DB --> API : succès
+    deactivate DB
+
+    API --> IW : {success: true}
+    deactivate API
+
+    IW --> C : "Votre réservation a été annulée"
+
+    IW -> API : GET /api/reservations/user/{userId}
+    activate API
+    API -> DB : SELECT r.*, rest.name, rest.address FROM reservations r JOIN restaurants rest WHERE r.user_id = ?
+    activate DB
+    DB --> API : reservations[]
+    deactivate DB
+    API --> IW : reservations[]
+    deactivate API
+
+    IW --> C : AfficherListeActualisée(reservations)
+  end
+end
+deactivate IW
+
+@enduml

@@ -1,0 +1,25 @@
+@startuml
+title Diagramme de séquence - Déconnexion
+
+actor "Utilisateur" as U
+participant "Interface Web" as IW
+participant "SessionManager" as SM
+
+== Déconnexion d'un utilisateur ==
+U -> IW : ClicDéconnexion()
+activate IW
+
+IW -> SM : logout()
+activate SM
+
+SM -> SM : localStorage.removeItem("userSession")
+SM -> SM : sessionStorage.removeItem("userSession")
+
+SM --> IW : session supprimée
+deactivate SM
+
+IW -> IW : window.location.reload()
+IW -> U : Redirection et actualisation de la page
+deactivate IW
+
+@enduml

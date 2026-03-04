@@ -1,0 +1,50 @@
+@startuml
+title Diagramme de séquence - Suppression du compte utilisateur
+
+actor "Utilisateur" as U
+participant "Interface Web" as IW
+participant "SessionManager" as SM
+participant "API Backend" as API
+participant "Base de données" as DB
+
+== Suppression du compte utilisateur ==
+U -> IW : AccèsPageProfil()
+activate IW
+
+IW -> SM : getCurrentUser()
+activate SM
+SM --> IW : user
+deactivate SM
+
+alt Utilisateur non connecté
+  IW --> U : Redirection vers auth.html
+else Utilisateur connecté
+  IW --> U : AfficherPageProfil()
+  U -> IW : ClicSupprimerCompte()
+  IW --> U : Confirmation("Êtes-vous sûr de vouloir supprimer votre compte ?")
+  U -> IW : ConfirmerSuppression()
+
+  IW -> API : DELETE /api/users/{userId}
+  activate API
+
+  API -> DB : DELETE FROM users WHERE id = ?
+  activate DB
+  DB --> API : succès
+  deactivate DB
+
+  API --> IW : {success: true}
+  deactivate API
+
+  IW -> SM : logout()
+  activate SM
+  SM -> SM : localStorage.removeItem("userSession")
+  SM -> SM : sessionStorage.removeItem("userSession")
+  SM --> IW : session supprimée
+  deactivate SM
+
+  IW --> U : "Compte supprimé avec succès"
+  IW -> U : Redirection vers index.html
+end
+deactivate IW
+
+@enduml

@@ -1,0 +1,62 @@
+@startuml
+title Diagrammes de séquence - Authentification et Gestion de compte
+
+' =========================
+' 1) Inscription d'un nouveau client
+' =========================
+actor "Utilisateur" as U
+participant "Interface Web" as IW
+participant "AuthService" as AS
+participant "API Backend" as API
+participant "Base de données" as DB
+participant "SessionManager" as SM
+
+== Inscription d'un nouveau client ==
+U -> IW : RemplitFormulaireInscription(nom, email, mdp, role)
+activate IW
+IW -> IW : ValiderChamps()
+alt Champs invalides
+  IW --> U : Erreur("Veuillez remplir tous les champs")
+else Champs valides
+  IW -> AS : register(nom, email, mdp, role, restaurantId)
+  activate AS
+  AS -> API : POST /api/auth/register
+  activate API
+  API -> DB : SELECT email
+  activate DB
+  DB --> API : résultat
+  deactivate DB
+  alt Email déjà existant
+    API --> AS : Erreur("Cet email est déjà utilisé")
+    AS --> IW : Erreur
+    IW --> U : Erreur("Cet email est déjà utilisé")
+  else Email disponible
+    API -> API : hasherMotDePasse(mdp)
+    API -> DB : INSERT INTO users(nom, email, password, role, restaurant_id)
+    activate DB
+    DB --> API : userId
+    deactivate DB
+    API -> API : login(email, mdp)
+    API -> DB : SELECT * FROM users WHERE email
+    activate DB
+    DB --> API : user
+    deactivate DB
+    API -> API : comparePassword(mdp, user.password)
+    API --> AS : {userId, userName, userEmail, userRole, restaurantId}
+    deactivate API
+    AS --> IW : user
+    deactivate AS
+    IW -> SM : login(user, rememberMe)
+    activate SM
+    SM -> SM : créerSession(user)
+    SM -> SM : sauvegarderLocalStorage(session)
+    SM --> IW : session créée
+    deactivate SM
+    IW --> U : "Inscription réussie ! Bienvenue"
+    IW -> IW : setTimeout(redirection)
+    IW -> U : Redirection vers index.html
+  end
+end
+deactivate IW
+
+@enduml

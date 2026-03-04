@@ -1,0 +1,69 @@
+@startuml
+title Diagramme de séquence - Refus d'une réservation (Restaurant)
+
+actor "Restaurateur" as R
+participant "Interface Web" as IW
+participant "SessionManager" as SM
+participant "API Backend" as API
+participant "Base de données" as DB
+
+== Refus d'une réservation ==
+R -> IW : ConsulterRéservationsPendantes()
+activate IW
+
+IW -> SM : getCurrentUser()
+activate SM
+SM --> IW : user {userRole: "restaurant", restaurantId}
+deactivate SM
+
+IW -> API : GET /api/reservations/restaurant/{restaurantId}
+activate API
+API -> DB : SELECT r.*, u.name, u.email FROM reservations r JOIN users u WHERE r.restaurant_id = ?
+activate DB
+DB --> API : reservations[]
+deactivate DB
+API --> IW : reservations[]
+deactivate API
+
+IW --> R : AfficherRéservations(reservations filtrées par status="pending")
+
+R -> IW : ClicRefuserRéservation(reservationId)
+IW --> R : Confirmation("Voulez-vous refuser cette réservation ?")
+
+alt Restaurateur annule
+  IW --> R : Action annulée
+else Restaurateur confirme le refus
+  IW -> API : PUT /api/reservations/{reservationId}/status {status: "refused"}
+  activate API
+
+  API -> API : ValiderStatut("refused")
+  alt Statut invalide (non autorisé)
+    API --> IW : Erreur("Statut invalide")
+    IW --> R : Erreur("Statut invalide")
+  else Statut valide
+    API -> DB : UPDATE reservations SET status = 'refused', updated_at = CURRENT_TIMESTAMP WHERE id = ?
+    activate DB
+    DB --> API : succès
+    deactivate DB
+
+    API --> IW : {success: true}
+    deactivate API
+
+    IW --> R : "Réservation refusée"
+
+    ' Recharger les réservations
+    IW -> API : GET /api/reservations/restaurant/{restaurantId}
+    activate API
+    API -> DB : SELECT r.*, u.name, u.email FROM reservations r JOIN users u WHERE r.restaurant_id = ?
+    activate DB
+    DB --> API : reservations[]
+    deactivate DB
+    API --> IW : reservations[]
+    deactivate API
+
+    IW --> R : AfficherRéservationsActualisées(reservations)
+  end
+end
+deactivate IW
+
+@enduml

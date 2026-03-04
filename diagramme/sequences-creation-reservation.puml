@@ -1,0 +1,77 @@
+@startuml
+title Diagramme de séquence - Création d'une réservation
+
+actor "Client" as C
+participant "Interface Web" as IW
+participant "SessionManager" as SM
+participant "API Backend" as API
+participant "Base de données" as DB
+
+== Création d'une réservation ==
+C -> IW : ClicSurRestaurant(restaurantId)
+activate IW
+
+IW -> API : GET /api/restaurants/{restaurantId}
+activate API
+API -> DB : SELECT * FROM restaurants WHERE id = ?
+activate DB
+DB --> API : restaurant
+deactivate DB
+API --> IW : restaurant
+deactivate API
+
+IW --> C : AfficherFormulaireRéservation(restaurant)
+
+C -> IW : SélectionnerServiceType(sur_place/a_emporter)
+C -> IW : SélectionnerDate(date)
+C -> IW : SélectionnerHeure(heure)
+C -> IW : SélectionnerNombrePersonnes(guests)
+C -> IW : RemplirInformations(nom, téléphone, email)
+C -> IW : AjouterDemandesSpéciales(texte)
+C -> IW : ClicConfirmer()
+
+IW -> SM : getCurrentUser()
+activate SM
+SM --> IW : user
+deactivate SM
+
+alt Utilisateur non connecté
+  IW --> C : Confirmation("Vous devez être connecté pour réserver")
+  alt Client accepte
+    IW -> SM : sauvegarderRedirection(URL actuelle)
+    IW -> C : Redirection vers auth.html
+  else Client refuse
+    IW --> C : Annulation de la réservation
+  end
+else Utilisateur connecté
+  IW -> IW : ValiderChamps()
+  alt Type de service non sélectionné
+    IW --> C : Erreur("Veuillez choisir un type de service")
+  else Champs obligatoires manquants
+    IW --> C : Erreur("Veuillez remplir tous les champs obligatoires")
+  else Tous les champs valides
+    IW -> API : POST /api/reservations {userId, restaurantId, date, time, guests, serviceType, specialRequests}
+    activate API
+
+    API -> API : ValiderDonnées()
+    alt Données invalides
+      API --> IW : Erreur("Tous les champs requis sont manquants")
+      IW --> C : Erreur("Tous les champs requis sont manquants")
+    else Données valides
+      API -> DB : INSERT INTO reservations(...) VALUES(...)
+      activate DB
+      DB --> API : reservationId
+      deactivate DB
+
+      API --> IW : {success: true, reservationId}
+      deactivate API
+
+      IW --> C : "Réservation enregistrée ! Votre demande a été envoyée."
+      IW -> IW : setTimeout(3000ms)
+      IW -> C : Redirection vers my-reservations.html
+    end
+  end
+end
+deactivate IW
+
+@enduml

@@ -1,0 +1,79 @@
+@startuml
+title Diagramme de séquence - Modification du profil utilisateur
+
+actor "Utilisateur" as U
+participant "Interface Web" as IW
+participant "SessionManager" as SM
+participant "API Backend" as API
+participant "Base de données" as DB
+
+== Modification du profil (avec changement de mot de passe) ==
+U -> IW : AccèsPageProfil()
+activate IW
+
+IW -> SM : getCurrentUser()
+activate SM
+SM --> IW : user
+deactivate SM
+
+alt Utilisateur non connecté
+  IW --> U : Redirection vers auth.html
+else Utilisateur connecté
+  IW --> U : AfficherFormulaireProfil(user.name, user.email)
+  U -> IW : ModifierNom(nouveauNom)
+  U -> IW : ModifierEmail(nouvelEmail)
+  U -> IW : SaisirMotDePasseActuel(mdpActuel)
+  U -> IW : SaisirNouveauMotDePasse(nouveauMdp)
+  U -> IW : ClicSauvegarder()
+
+  IW -> IW : ValiderChamps()
+  alt Champs invalides
+    IW --> U : Erreur("Veuillez remplir tous les champs requis")
+  else Champs valides
+    IW -> API : PUT /api/users/{userId} {name, email, currentPassword, newPassword}
+    activate API
+
+    API -> DB : SELECT * FROM users WHERE id = ?
+    activate DB
+    DB --> API : user
+    deactivate DB
+
+    alt Utilisateur non trouvé
+      API --> IW : Erreur("Utilisateur non trouvé")
+      IW --> U : Erreur("Utilisateur non trouvé")
+    else Utilisateur trouvé
+      alt Changement de mot de passe demandé
+        alt Mot de passe actuel non fourni
+          API --> IW : Erreur("Mot de passe actuel requis")
+          IW --> U : Erreur("Mot de passe actuel requis")
+        else Mot de passe actuel fourni
+          API -> API : bcrypt.compare(mdpActuel, user.password)
+          alt Mot de passe actuel incorrect
+            API --> IW : Erreur("Mot de passe actuel incorrect")
+            IW --> U : Erreur("Mot de passe actuel incorrect")
+          else Mot de passe actuel correct
+            API -> API : bcrypt.hash(nouveauMdp)
+            API -> DB : UPDATE users SET name=?, email=?, password=? WHERE id=?
+            activate DB
+            DB --> API : succès
+            deactivate DB
+            API --> IW : {success: true}
+            deactivate API
+            IW --> U : "Profil mis à jour avec succès"
+          end
+        end
+      else Pas de changement de mot de passe
+        API -> DB : UPDATE users SET name=?, email=? WHERE id=?
+        activate DB
+        DB --> API : succès
+        deactivate DB
+        API --> IW : {success: true}
+        deactivate API
+        IW --> U : "Profil mis à jour avec succès"
+      end
+    end
+  end
+end
+deactivate IW
+
+@enduml

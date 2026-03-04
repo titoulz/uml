@@ -27,76 +27,32 @@ function playSalaamaleykum() {
     }
 }
 
-// Base de données fictive d'utilisateurs
-class UserDatabase {
-    constructor() {
-        this.initializeDB();
-    }
-
-    initializeDB() {
-        if (!localStorage.getItem('usersDB')) {
-            const defaultUsers = [
-                {
-                    id: 1,
-                    name: 'Admin User',
-                    email: 'admin@restaurant.com',
-                    password: 'admin123',
-                    role: 'client',
-                    createdAt: new Date().toISOString()
-                },
-                {
-                    id: 2,
-                    name: 'Test User',
-                    email: 'test@exemple.com',
-                    password: 'test123',
-                    role: 'client',
-                    createdAt: new Date().toISOString()
-                },
-                {
-                    id: 3,
-                    name: 'West Africa Restaurant',
-                    email: 'contact@westafrica.com',
-                    password: 'restaurant123',
-                    role: 'restaurant',
-                    restaurantId: 1,
-                    createdAt: new Date().toISOString()
-                }
-            ];
-            localStorage.setItem('usersDB', JSON.stringify(defaultUsers));
+// API Authentication Service
+class AuthService {
+    static async login(email, password) {
+        try {
+            const response = await apiRequest(API_CONFIG.ENDPOINTS.LOGIN, {
+                method: 'POST',
+                body: { email, password }
+            });
+            return response.user;
+        } catch (error) {
+            throw new Error(error.message || 'Erreur de connexion');
         }
     }
 
-    getAllUsers() {
-        return JSON.parse(localStorage.getItem('usersDB') || '[]');
-    }
+    static async register(name, email, password, role, restaurantId = null) {
+        try {
+            const response = await apiRequest(API_CONFIG.ENDPOINTS.REGISTER, {
+                method: 'POST',
+                body: { name, email, password, role, restaurantId }
+            });
 
-    findUserByEmail(email) {
-        const users = this.getAllUsers();
-        return users.find(user => user.email.toLowerCase() === email.toLowerCase());
-    }
-
-    addUser(name, email, password, role, restaurantId = null) {
-        const users = this.getAllUsers();
-        const newUser = {
-            id: users.length > 0 ? Math.max(...users.map(u => u.id)) + 1 : 1,
-            name,
-            email,
-            password,
-            role,
-            restaurantId,
-            createdAt: new Date().toISOString()
-        };
-        users.push(newUser);
-        localStorage.setItem('usersDB', JSON.stringify(users));
-        return newUser;
-    }
-
-    validateCredentials(email, password) {
-        const user = this.findUserByEmail(email);
-        if (user && user.password === password) {
-            return user;
+            // Après inscription, se connecter automatiquement
+            return await this.login(email, password);
+        } catch (error) {
+            throw new Error(error.message || 'Erreur d\'inscription');
         }
-        return null;
     }
 }
 
@@ -104,10 +60,10 @@ class UserDatabase {
 class SessionManager {
     static login(user, rememberMe = false) {
         const session = {
-            userId: user.id,
-            userName: user.name,
-            userEmail: user.email,
-            userRole: user.role,
+            userId: user.userId,
+            userName: user.userName,
+            userEmail: user.userEmail,
+            userRole: user.userRole,
             restaurantId: user.restaurantId || null,
             isLoggedIn: true,
             loginTime: new Date().toISOString()
@@ -135,9 +91,6 @@ class SessionManager {
     }
 }
 
-// Initialisation
-const db = new UserDatabase();
-
 // Éléments du DOM
 const loginTab = document.getElementById('login-tab');
 const registerTab = document.getElementById('register-tab');
@@ -160,7 +113,7 @@ registerTab.addEventListener('click', () => {
 });
 
 // Gestion du formulaire de connexion
-loginForm.addEventListener('submit', (e) => {
+loginForm.addEventListener('submit', async (e) => {
     e.preventDefault();
 
     const email = document.getElementById('login-email').value;
@@ -173,28 +126,28 @@ loginForm.addEventListener('submit', (e) => {
         return;
     }
 
-    // Validation des credentials
-    const user = db.validateCredentials(email, password);
+    try {
+        // Authentification via API
+        const user = await AuthService.login(email, password);
 
-    if (user) {
         SessionManager.login(user, rememberMe);
 
         // Jouer le son de bienvenue
         playSalaamaleykum();
 
-        alert('Connexion réussie ! Bienvenue ' + user.name);
+        alert('Connexion réussie ! Bienvenue ' + user.userName);
 
         // Attendre un peu pour que le son se joue avant la redirection
         setTimeout(() => {
             window.location.href = 'index.html';
         }, 1500);
-    } else {
-        alert('Email ou mot de passe incorrect');
+    } catch (error) {
+        alert(error.message);
     }
 });
 
 // Gestion du formulaire d'inscription
-registerForm.addEventListener('submit', (e) => {
+registerForm.addEventListener('submit', async (e) => {
     e.preventDefault();
 
     const role = document.getElementById('register-role').value;
@@ -230,65 +183,48 @@ registerForm.addEventListener('submit', (e) => {
         return;
     }
 
-    // Vérifier si l'email existe déjà
-    if (db.findUserByEmail(email)) {
-        alert('Un compte avec cet email existe déjà');
-        return;
-    }
-
     // Pour les restaurants, demander quel restaurant ils gèrent
     let restaurantId = null;
     if (role === 'restaurant') {
-        const restaurants = [
-            { id: 1, name: "West Africa" },
-            { id: 2, name: "Rochangul" },
-            { id: 3, name: "Le Pharaon" },
-            { id: 4, name: "Sartaj" },
-            { id: 5, name: "Shalimar" },
-            { id: 6, name: "Chez Ali" },
-            { id: 7, name: "Mon Poulet Braisé" },
-            { id: 8, name: "Hollywood Canteen" },
-            { id: 9, name: "A La Braise By Abou" },
-            { id: 10, name: "Table du Garçon Boucher" },
-            { id: 11, name: "BChef Dijon" },
-            { id: 12, name: "Babou" },
-            { id: 13, name: "Lycée Kebab" },
-            { id: 14, name: "Eden Kebab" },
-            { id: 15, name: "O'Crousti Poulet" },
-            { id: 16, name: "GOWOK" },
-            { id: 17, name: "Chamas Tacos" },
-            { id: 18, name: "Pizza's Smile" },
-            { id: 19, name: "Alforno Pizza" },
-            { id: 20, name: "O'Tacos" }
-        ];
+        try {
+            // Charger la liste des restaurants depuis l'API
+            const restaurants = await apiRequest(API_CONFIG.ENDPOINTS.RESTAURANTS);
 
-        const restaurantList = restaurants.map(r => `${r.id}. ${r.name}`).join('\n');
-        const selectedId = prompt(
-            `Vous vous inscrivez en tant que restaurant.\n\nQuel restaurant gérez-vous ? (Entrez le numéro)\n\n${restaurantList}`
-        );
+            const restaurantList = restaurants.map(r => `${r.id}. ${r.name}`).join('\n');
+            const selectedId = prompt(
+                `Vous vous inscrivez en tant que restaurant.\n\nQuel restaurant gérez-vous ? (Entrez le numéro)\n\n${restaurantList}`
+            );
 
-        restaurantId = parseInt(selectedId);
-        if (!restaurantId || restaurantId < 1 || restaurantId > 20) {
-            alert('Numéro de restaurant invalide');
+            restaurantId = parseInt(selectedId);
+            if (!restaurantId || !restaurants.find(r => r.id === restaurantId)) {
+                alert('Numéro de restaurant invalide');
+                return;
+            }
+        } catch (error) {
+            alert('Impossible de charger la liste des restaurants');
             return;
         }
     }
 
-    // Créer le nouvel utilisateur
-    const newUser = db.addUser(name, email, password, role, restaurantId);
+    try {
+        // Créer le nouvel utilisateur via API
+        const user = await AuthService.register(name, email, password, role, restaurantId);
 
-    // Connexion automatique après inscription
-    SessionManager.login(newUser, true);
+        // Connexion automatique après inscription
+        SessionManager.login(user, true);
 
-    // Jouer le son de bienvenue
-    playSalaamaleykum();
+        // Jouer le son de bienvenue
+        playSalaamaleykum();
 
-    alert('Inscription réussie ! Bienvenue ' + name);
+        alert('Inscription réussie ! Bienvenue ' + user.userName);
 
-    // Attendre un peu pour que le son se joue avant la redirection
-    setTimeout(() => {
-        window.location.href = 'index.html';
-    }, 1500);
+        // Attendre un peu pour que le son se joue avant la redirection
+        setTimeout(() => {
+            window.location.href = 'index.html';
+        }, 1500);
+    } catch (error) {
+        alert(error.message);
+    }
 });
 
 // Validation en temps réel du mot de passe

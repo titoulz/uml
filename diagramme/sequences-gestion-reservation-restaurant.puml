@@ -1,0 +1,89 @@
+@startuml
+title Diagramme de séquence - Gestion des réservations (Restaurant)
+
+actor "Restaurateur" as R
+participant "Interface Web" as IW
+participant "SessionManager" as SM
+participant "API Backend" as API
+participant "Base de données" as DB
+
+== Acceptation d'une réservation ==
+R -> IW : AccèsGestionRéservations()
+activate IW
+
+IW -> SM : getCurrentUser()
+activate SM
+SM --> IW : user
+deactivate SM
+
+alt Utilisateur non connecté
+  IW --> R : Redirection vers auth.html
+else Utilisateur non restaurant
+  IW --> R : Erreur("Cette page est réservée aux restaurants")
+  IW -> R : Redirection vers index.html
+else Pas de restaurant associé
+  IW --> R : Erreur("Aucun restaurant associé à votre compte")
+  IW -> R : Redirection vers index.html
+else Utilisateur restaurant valide
+  IW -> API : GET /api/restaurants/{restaurantId}
+  activate API
+  API -> DB : SELECT * FROM restaurants WHERE id = ?
+  activate DB
+  DB --> API : restaurant
+  deactivate DB
+  API --> IW : restaurant
+  deactivate API
+
+  IW -> API : GET /api/reservations/restaurant/{restaurantId}
+  activate API
+  API -> DB : SELECT r.*, u.name, u.email FROM reservations r JOIN users u WHERE r.restaurant_id = ?
+  activate DB
+  DB --> API : reservations[]
+  deactivate DB
+  API --> IW : reservations[]
+  deactivate API
+
+  IW --> R : AfficherRéservations(restaurant, reservations)
+
+  ' === Acceptation d'une réservation ===
+  R -> IW : ClicAccepterRéservation(reservationId)
+  IW --> R : Confirmation("Voulez-vous accepter cette réservation ?")
+
+  alt Restaurateur refuse
+    IW --> R : Action annulée
+  else Restaurateur confirme
+    IW -> API : PUT /api/reservations/{reservationId}/status {status: "confirmed"}
+    activate API
+
+    API -> API : ValiderStatut(status)
+    alt Statut invalide
+      API --> IW : Erreur("Statut invalide")
+      IW --> R : Erreur("Statut invalide")
+    else Statut valide
+      API -> DB : UPDATE reservations SET status = 'confirmed', updated_at = CURRENT_TIMESTAMP WHERE id = ?
+      activate DB
+      DB --> API : succès
+      deactivate DB
+
+      API --> IW : {success: true}
+      deactivate API
+
+      IW --> R : "Réservation acceptée !"
+
+      ' Recharger les réservations
+      IW -> API : GET /api/reservations/restaurant/{restaurantId}
+      activate API
+      API -> DB : SELECT r.*, u.name, u.email FROM reservations r JOIN users u WHERE r.restaurant_id = ?
+      activate DB
+      DB --> API : reservations[]
+      deactivate DB
+      API --> IW : reservations[]
+      deactivate API
+
+      IW --> R : AfficherRéservationsActualisées(reservations)
+    end
+  end
+end
+deactivate IW
+
+@enduml

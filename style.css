@@ -97,6 +97,25 @@ header p {
     color: #667eea;
 }
 
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.user-name-link {
+    color: white;
+    text-decoration: none;
+    font-weight: 600;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.user-name-link:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
 /* MAIN CONTAINER */
 main {
     padding: 2rem 1rem;

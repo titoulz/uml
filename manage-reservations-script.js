@@ -1,27 +1,3 @@
-// Données des restaurants
-const restaurants = [
-    { id: 1, name: "West Africa" },
-    { id: 2, name: "Rochangul" },
-    { id: 3, name: "Le Pharaon" },
-    { id: 4, name: "Sartaj" },
-    { id: 5, name: "Shalimar" },
-    { id: 6, name: "Chez Ali" },
-    { id: 7, name: "Mon Poulet Braisé" },
-    { id: 8, name: "Hollywood Canteen" },
-    { id: 9, name: "A La Braise By Abou" },
-    { id: 10, name: "Table du Garçon Boucher" },
-    { id: 11, name: "BChef Dijon" },
-    { id: 12, name: "Babou" },
-    { id: 13, name: "Lycée Kebab" },
-    { id: 14, name: "Eden Kebab" },
-    { id: 15, name: "O'Crousti Poulet" },
-    { id: 16, name: "GOWOK" },
-    { id: 17, name: "Chamas Tacos" },
-    { id: 18, name: "Pizza's Smile" },
-    { id: 19, name: "Alforno Pizza" },
-    { id: 20, name: "O'Tacos" }
-];
-
 // Session management
 class SessionManager {
     static getCurrentUser() {
@@ -31,30 +7,6 @@ class SessionManager {
 
     static isLoggedIn() {
         return this.getCurrentUser() !== null;
-    }
-}
-
-// Gestion des réservations
-class ReservationManager {
-    static getAllReservations() {
-        return JSON.parse(localStorage.getItem('reservations') || '[]');
-    }
-
-    static getRestaurantReservations(restaurantId) {
-        const reservations = this.getAllReservations();
-        return reservations.filter(res => res.restaurantId === restaurantId);
-    }
-
-    static updateReservationStatus(reservationId, status) {
-        const reservations = this.getAllReservations();
-        const index = reservations.findIndex(r => r.id === reservationId);
-        if (index !== -1) {
-            reservations[index].status = status;
-            reservations[index].statusUpdatedAt = new Date().toISOString();
-            localStorage.setItem('reservations', JSON.stringify(reservations));
-            return true;
-        }
-        return false;
     }
 }
 
@@ -75,19 +27,35 @@ if (!currentUser.restaurantId) {
     window.location.href = 'index.html';
 }
 
-// Récupérer les informations du restaurant
-const restaurant = restaurants.find(r => r.id === currentUser.restaurantId);
-if (restaurant) {
-    document.getElementById('restaurant-name-header').textContent = restaurant.name;
+// Variables globales
+let allReservations = [];
+let currentFilter = 'all';
+let restaurant = null;
+
+// Charger les informations du restaurant
+async function loadRestaurant() {
+    try {
+        restaurant = await apiRequest(`${API_CONFIG.ENDPOINTS.RESTAURANTS}/${currentUser.restaurantId}`);
+        document.getElementById('restaurant-name-header').textContent = restaurant.name;
+    } catch (error) {
+        console.error('Erreur chargement restaurant:', error);
+    }
 }
 
-// Récupérer les réservations du restaurant
-let allReservations = ReservationManager.getRestaurantReservations(currentUser.restaurantId);
-let currentFilter = 'all';
+// Charger les réservations du restaurant
+async function loadReservations() {
+    try {
+        allReservations = await apiRequest(`${API_CONFIG.ENDPOINTS.RESERVATIONS}/restaurant/${currentUser.restaurantId}`);
+        displayReservations();
+    } catch (error) {
+        console.error('Erreur chargement réservations:', error);
+        alert('Impossible de charger les réservations');
+    }
+}
 
 // Fonction pour mettre à jour les statistiques
 function updateStats() {
-    const pending = allReservations.filter(r => r.status === 'pending' || r.status === 'confirmed').length;
+    const pending = allReservations.filter(r => r.status === 'pending').length;
     const confirmed = allReservations.filter(r => r.status === 'confirmed').length;
     const refused = allReservations.filter(r => r.status === 'refused').length;
     const total = allReservations.length;
@@ -119,22 +87,26 @@ function createReservationCard(reservation) {
         statusText = 'Refusée';
     }
 
+    // Mapper le type de service
+    const serviceTypeText = reservation.service_type === 'a_emporter'
+        ? '🥡 À emporter (Ailleurs que là-bas)'
+        : '🪑 Sur place (Ici pas sur place)';
+    const serviceIcon = reservation.service_type === 'a_emporter' ? '🥡' : '🪑';
+
     card.innerHTML = `
         <div class="reservation-header">
             <div>
                 <h3>Réservation #${reservation.id}</h3>
-                <p style="color: #666; margin-top: 0.3rem;">Créée le ${new Date(reservation.createdAt).toLocaleString('fr-FR')}</p>
+                <p style="color: #666; margin-top: 0.3rem;">Créée le ${new Date(reservation.created_at).toLocaleString('fr-FR')}</p>
             </div>
             <span class="reservation-status ${statusClass}">${statusText}</span>
         </div>
 
         <div class="reservation-details">
-            ${reservation.serviceTypeText ? `
-                <div class="detail-item" style="grid-column: 1 / -1;">
-                    <span class="detail-icon">${reservation.serviceType === 'takeaway' ? '🥡' : '🪑'}</span>
-                    <span><strong>Type :</strong> ${reservation.serviceTypeText}</span>
-                </div>
-            ` : ''}
+            <div class="detail-item" style="grid-column: 1 / -1;">
+                <span class="detail-icon">${serviceIcon}</span>
+                <span><strong>Type :</strong> ${serviceTypeText}</span>
+            </div>
             <div class="detail-item">
                 <span class="detail-icon">📅</span>
                 <span><strong>Date :</strong> ${formattedDate}</span>
@@ -149,23 +121,22 @@ function createReservationCard(reservation) {
             </div>
             <div class="detail-item">
                 <span class="detail-icon">👤</span>
-                <span><strong>Nom :</strong> ${reservation.guestName}</span>
+                <span><strong>Nom :</strong> ${reservation.user_name}</span>
             </div>
         </div>
 
         <div class="reservation-info">
-            <p><strong>📞 Téléphone :</strong> ${reservation.guestPhone}</p>
-            <p><strong>✉️ Email :</strong> ${reservation.guestEmail}</p>
+            <p><strong>✉️ Email :</strong> ${reservation.user_email}</p>
         </div>
 
-        ${reservation.specialRequests ? `
+        ${reservation.special_requests ? `
             <div class="special-requests">
-                <p><strong>💬 Demandes spéciales :</strong> ${reservation.specialRequests}</p>
+                <p><strong>💬 Demandes spéciales :</strong> ${reservation.special_requests}</p>
             </div>
         ` : ''}
 
         <div class="reservation-actions">
-            ${reservation.status === 'pending' || reservation.status === 'confirmed' ? `
+            ${reservation.status === 'pending' ? `
                 <button class="action-btn btn-accept" onclick="acceptReservation(${reservation.id})">
                     ✅ Accepter
                 </button>
@@ -175,6 +146,9 @@ function createReservationCard(reservation) {
             ` : ''}
             ${reservation.status === 'refused' ? `
                 <p style="color: #c62828; font-style: italic;">Cette réservation a été refusée</p>
+            ` : ''}
+            ${reservation.status === 'confirmed' ? `
+                <p style="color: #2e7d32; font-style: italic;">Cette réservation a été acceptée</p>
             ` : ''}
         </div>
     `;
@@ -209,35 +183,39 @@ function displayReservations() {
 }
 
 // Accepter une réservation
-function acceptReservation(reservationId) {
+async function acceptReservation(reservationId) {
     const confirmed = confirm('Voulez-vous accepter cette réservation ?');
 
     if (confirmed) {
-        const success = ReservationManager.updateReservationStatus(reservationId, 'confirmed');
+        try {
+            await apiRequest(`${API_CONFIG.ENDPOINTS.RESERVATIONS}/${reservationId}/status`, {
+                method: 'PUT',
+                body: { status: 'confirmed' }
+            });
 
-        if (success) {
             alert('Réservation acceptée !');
-            allReservations = ReservationManager.getRestaurantReservations(currentUser.restaurantId);
-            displayReservations();
-        } else {
-            alert('Erreur lors de l\'acceptation de la réservation');
+            await loadReservations();
+        } catch (error) {
+            alert('Erreur lors de l\'acceptation de la réservation: ' + error.message);
         }
     }
 }
 
 // Refuser une réservation
-function refuseReservation(reservationId) {
+async function refuseReservation(reservationId) {
     const confirmed = confirm('Voulez-vous refuser cette réservation ?');
 
     if (confirmed) {
-        const success = ReservationManager.updateReservationStatus(reservationId, 'refused');
+        try {
+            await apiRequest(`${API_CONFIG.ENDPOINTS.RESERVATIONS}/${reservationId}/status`, {
+                method: 'PUT',
+                body: { status: 'refused' }
+            });
 
-        if (success) {
             alert('Réservation refusée');
-            allReservations = ReservationManager.getRestaurantReservations(currentUser.restaurantId);
-            displayReservations();
-        } else {
-            alert('Erreur lors du refus de la réservation');
+            await loadReservations();
+        } catch (error) {
+            alert('Erreur lors du refus de la réservation: ' + error.message);
         }
     }
 }
@@ -260,5 +238,8 @@ filterButtons.forEach(btn => {
     });
 });
 
-// Affichage initial
-displayReservations();
+// Initialiser au chargement de la page
+document.addEventListener('DOMContentLoaded', async () => {
+    await loadRestaurant();
+    await loadReservations();
+});

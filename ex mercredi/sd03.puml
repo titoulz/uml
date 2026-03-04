@@ -1,0 +1,34 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam ParticipantPadding 20
+skinparam BoxPadding 8
+skinparam roundcorner 4
+skinparam sequenceGroupBorderColor #1e6fa0
+skinparam sequenceGroupBackgroundColor #e8f4f8
+
+title SD 03 — Suppression d'un compte
+
+actor Utilisateur
+participant ":Banque" as Banque
+participant ":Compte" as Compte
+
+Utilisateur -> Banque : SuppressionCompte(c : Compte)
+activate Banque
+
+Banque -> Compte : getSolde()
+activate Compte
+Compte --> Banque : solde : double
+deactivate Compte
+
+alt [solde == 0 → suppression autorisée]
+    Banque -> Compte : <<destroy>>
+    destroy Compte
+    Banque --> Utilisateur : ok
+else [solde ≠ 0 → suppression refusée]
+    Banque --> Utilisateur : Erreur : solde non nul
+end
+
+deactivate Banque
+
+note over Banque : La suppression n'est autorisée que\nsi le solde du compte est nul.
+@enduml

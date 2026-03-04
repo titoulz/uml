@@ -66,12 +66,29 @@ function updateAuthUI() {
     }
 }
 
+// Variable globale pour stocker les restaurants
+let restaurants = [];
+
+// Fonction pour charger les restaurants depuis l'API
+async function loadRestaurants() {
+    try {
+        restaurants = await apiRequest(API_CONFIG.ENDPOINTS.RESTAURANTS);
+        console.log(`✅ ${restaurants.length} restaurants chargés depuis l'API`);
+        initializeMap();
+    } catch (error) {
+        console.error('❌ Erreur lors du chargement des restaurants:', error);
+        alert('Impossible de charger les restaurants. Vérifiez que le serveur API est démarré.');
+    }
+}
+
 // Initialisation au chargement de la page
 document.addEventListener('DOMContentLoaded', () => {
     updateAuthUI();
+    loadRestaurants();
 });
 
-// Restaurants halal à Dijon et environs
+// Restaurants halal à Dijon et environs (DEPRECIÉ - maintenant chargé depuis l'API)
+/*
 const restaurants = [
     {
         id: 1,
@@ -82,195 +99,24 @@ const restaurants = [
         lng: 5.0485,
         phone: "03 80 XX XX XX"
     },
-    {
-        id: 2,
-        name: "Rochangul",
-        address: "86 Rue Godrans, 21000 Dijon",
-        type: "Ouïghour",
-        lat: 47.3215,
-        lng: 5.0405,
-        phone: "03 80 XX XX XX"
-    },
-    {
-        id: 3,
-        name: "Le Pharaon",
-        address: "116 Rue Berbisey, 21000 Dijon",
-        type: "Libanaise",
-        lat: 47.3185,
-        lng: 5.0445,
-        phone: "03 80 XX XX XX"
-    },
-    {
-        id: 4,
-        name: "Sartaj",
-        address: "42 Rue Berbisey, 21000 Dijon",
-        type: "Indienne",
-        lat: 47.3195,
-        lng: 5.0425,
-        phone: "03 80 XX XX XX"
-    },
-    {
-        id: 5,
-        name: "Shalimar",
-        address: "17 Rue de la Poste, 21000 Dijon",
-        type: "Indienne/Pakistanaise",
-        lat: 47.3225,
-        lng: 5.0395,
-        phone: "03 80 XX XX XX"
-    },
-    {
-        id: 6,
-        name: "Chez Ali",
-        address: "24 Rue de la Chouette, 21000 Dijon",
-        type: "Maghrébine",
-        lat: 47.3210,
-        lng: 5.0415,
-        phone: "03 80 XX XX XX"
-    },
-    {
-        id: 7,
-        name: "Mon Poulet Braisé",
-        address: "8 Boulevard de l'Europe, 21800 Quetigny",
-        type: "Grillades",
-        lat: 47.3115,
-        lng: 5.0985,
-        phone: "03 80 XX XX XX"
-    },
-    {
-        id: 8,
-        name: "Hollywood Canteen",
-        address: "77 Rue en Paillery, 21850 Saint-Apollinaire",
-        type: "Grillades",
-        lat: 47.3415,
-        lng: 5.0685,
-        phone: "03 80 XX XX XX"
-    },
-    {
-        id: 9,
-        name: "A La Braise By Abou",
-        address: "35 Rue de Longvic, 21300 Chenôve",
-        type: "Poulet Braisé",
-        lat: 47.2935,
-        lng: 5.0215,
-        phone: "03 80 XX XX XX"
-    },
-    {
-        id: 10,
-        name: "Table du Garçon Boucher",
-        address: "132 Avenue Roland Carraz, 21300 Chenôve",
-        type: "Boucherie-Restaurant",
-        lat: 47.2885,
-        lng: 5.0145,
-        phone: "03 80 XX XX XX"
-    },
-    {
-        id: 11,
-        name: "BChef Dijon",
-        address: "Rue des Godrans, 21000 Dijon",
-        type: "Burgers",
-        lat: 47.3220,
-        lng: 5.0400,
-        phone: "03 80 XX XX XX"
-    },
-    {
-        id: 12,
-        name: "Babou",
-        address: "59 Rue Jeannin, 21000 Dijon",
-        type: "Burgers Gourmets",
-        lat: 47.3235,
-        lng: 5.0385,
-        phone: "03 80 XX XX XX"
-    },
-    {
-        id: 13,
-        name: "Lycée Kebab",
-        address: "18 Boulevard Thiers, 21000 Dijon",
-        type: "Kebab",
-        lat: 47.3165,
-        lng: 5.0365,
-        phone: "03 80 XX XX XX"
-    },
-    {
-        id: 14,
-        name: "Eden Kebab",
-        address: "21 Rue de la Préfecture, 21000 Dijon",
-        type: "Kebab",
-        lat: 47.3205,
-        lng: 5.0425,
-        phone: "03 80 XX XX XX"
-    },
-    {
-        id: 15,
-        name: "O'Crousti Poulet",
-        address: "12 Boulevard des Martyrs de la Résistance, 21000 Dijon",
-        type: "Poulet Frit",
-        lat: 47.3155,
-        lng: 5.0355,
-        phone: "03 80 XX XX XX"
-    },
-    {
-        id: 16,
-        name: "GOWOK",
-        address: "124 Rue d'Auxonne, 21000 Dijon",
-        type: "Wok",
-        lat: 47.3135,
-        lng: 5.0505,
-        phone: "03 80 XX XX XX"
-    },
-    {
-        id: 17,
-        name: "Chamas Tacos",
-        address: "7 Avenue Garibaldi, 21000 Dijon",
-        type: "Tacos",
-        lat: 47.3175,
-        lng: 5.0345,
-        phone: "03 80 XX XX XX"
-    },
-    {
-        id: 18,
-        name: "Pizza's Smile",
-        address: "109 Avenue Jean Jaurès, 21000 Dijon",
-        type: "Pizza",
-        lat: 47.3185,
-        lng: 5.0325,
-        phone: "03 80 XX XX XX"
-    },
-    {
-        id: 19,
-        name: "Alforno Pizza",
-        address: "6 Rue Condorcet, 21000 Dijon",
-        type: "Pizza",
-        lat: 47.3265,
-        lng: 5.0455,
-        phone: "03 80 XX XX XX"
-    },
-    {
-        id: 20,
-        name: "O'Tacos",
-        address: "114 Rue de Mirande, 21000 Dijon",
-        type: "Tacos",
-        lat: 47.3315,
-        lng: 5.0565,
-        phone: "03 80 XX XX XX"
-    }
-];
+*/
 
-// Initialisation de la carte centrée sur Dijon
-const map = L.map('map').setView([47.3220, 5.0415], 13);
+// Initialisation de la carte et des marqueurs
+let map;
+let markers = {};
 
-// Ajout du fond de carte OpenStreetMap
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-    maxZoom: 19
-}).addTo(map);
+function initializeMap() {
+    // Initialisation de la carte centrée sur Dijon
+    map = L.map('map').setView([47.3220, 5.0415], 13);
 
-// Utilisation des marqueurs par défaut de Leaflet
+    // Ajout du fond de carte OpenStreetMap
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        maxZoom: 19
+    }).addTo(map);
 
-// Stockage des marqueurs
-const markers = {};
-
-// Ajout des restaurants sur la carte
-restaurants.forEach(restaurant => {
+    // Ajout des restaurants sur la carte
+    restaurants.forEach(restaurant => {
     const marker = L.marker([restaurant.lat, restaurant.lng])
         .addTo(map)
         .bindPopup(`
@@ -297,30 +143,32 @@ restaurants.forEach(restaurant => {
             </div>
         `);
 
-    markers[restaurant.id] = marker;
-});
-
-// Affichage de la liste des restaurants dans la sidebar
-const restaurantList = document.getElementById('restaurant-list');
-
-restaurants.forEach(restaurant => {
-    const card = document.createElement('div');
-    card.className = 'restaurant-card';
-    card.innerHTML = `
-        <h3>${restaurant.name}</h3>
-        <p><strong>📍</strong> ${restaurant.address}</p>
-        <p><strong>📞</strong> ${restaurant.phone}</p>
-        <span class="cuisine-type">${restaurant.type}</span>
-        <a href="reservation.html?id=${restaurant.id}" class="reserve-btn" onclick="event.stopPropagation(); playReservationSound();">
-            📅 Réserver
-        </a>
-    `;
-
-    // Au clic sur une carte, centrer la carte et ouvrir le popup
-    card.addEventListener('click', () => {
-        map.setView([restaurant.lat, restaurant.lng], 15);
-        markers[restaurant.id].openPopup();
+        markers[restaurant.id] = marker;
     });
 
-    restaurantList.appendChild(card);
-});
+    // Affichage de la liste des restaurants dans la sidebar
+    const restaurantList = document.getElementById('restaurant-list');
+    restaurantList.innerHTML = ''; // Vider la liste avant de la remplir
+
+    restaurants.forEach(restaurant => {
+        const card = document.createElement('div');
+        card.className = 'restaurant-card';
+        card.innerHTML = `
+            <h3>${restaurant.name}</h3>
+            <p><strong>📍</strong> ${restaurant.address}</p>
+            <p><strong>📞</strong> ${restaurant.phone}</p>
+            <span class="cuisine-type">${restaurant.type}</span>
+            <a href="reservation.html?id=${restaurant.id}" class="reserve-btn" onclick="event.stopPropagation(); playReservationSound();">
+                📅 Réserver
+            </a>
+        `;
+
+        // Au clic sur une carte, centrer la carte et ouvrir le popup
+        card.addEventListener('click', () => {
+            map.setView([restaurant.lat, restaurant.lng], 15);
+            markers[restaurant.id].openPopup();
+        });
+
+        restaurantList.appendChild(card);
+    });
+}

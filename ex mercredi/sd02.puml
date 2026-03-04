@@ -1,0 +1,39 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam ParticipantPadding 20
+skinparam BoxPadding 8
+skinparam roundcorner 4
+skinparam sequenceGroupBorderColor #1e6fa0
+skinparam sequenceGroupBackgroundColor #e8f4f8
+
+title SD 02 — Création d'un compte
+
+actor Utilisateur
+participant ":Banque" as Banque
+participant ":Client" as Client
+participant ":Compte" as Compte <<create>>
+
+Utilisateur -> Banque : AjoutCompte(c : Client, num : string)
+activate Banque
+
+Banque -> Banque : RechercheCompte(num)
+
+alt [numéro non existant → création autorisée]
+    create Compte
+    Banque -> Compte : <<create>> new Compte(num)
+    activate Compte
+    Compte --> Banque : compte
+    deactivate Compte
+    Banque -> Client : ajouterCompte(compte)
+    activate Client
+    Client --> Banque : ok
+    deactivate Client
+    Banque --> Utilisateur : ok
+else [numéro déjà existant → erreur]
+    Banque --> Utilisateur : Erreur : numéro déjà existant
+end
+
+deactivate Banque
+
+note over Banque : Le numéro est vérifié avant création\nvia RechercheCompte().
+@enduml

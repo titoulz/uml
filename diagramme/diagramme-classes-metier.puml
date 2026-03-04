@@ -1,0 +1,130 @@
+@startuml
+title Diagramme de classes (métier) - Restaurants Halal
+
+skinparam classAttributeIconSize 0
+
+' ========= Enums =========
+enum UserRole {
+  CLIENT
+  RESTAURANT
+}
+
+enum ReservationStatus {
+  PENDING
+  CONFIRMED
+  REFUSED
+  CANCELLED
+}
+
+enum ServiceType {
+  SUR_PLACE
+  A_EMPORTER
+}
+
+' ========= Entités =========
+abstract class User {
+  - id: int
+  - name: string
+  - email: string
+  - password: string
+  - role: UserRole
+  - createdAt: datetime
+  + updateProfile(): boolean
+  + deleteAccount(): void
+}
+
+class Client {
+  - favoriteRestaurants: Restaurant[*]
+  + viewRestaurants(): Restaurant[*]
+  + makeReservation(): Reservation
+  + viewMyReservations(): Reservation[*]
+  + cancelReservation(id: int): boolean
+}
+
+class RestaurantOwner {
+  - managedRestaurantId: int
+  + viewReservations(): Reservation[*]
+  + acceptReservation(id: int): boolean
+  + refuseReservation(id: int): boolean
+  + viewStatistics(): object
+  + filterReservations(status: ReservationStatus): Reservation[*]
+}
+
+class Restaurant {
+  - id: int
+  - name: string
+  - address: string
+  - type: string
+  - phone: string
+  - lat: float
+  - lng: float
+  - certificationHalal: boolean
+  + getDetails(): object
+}
+
+class CertificationHalal {
+  - certified: boolean
+  - certificationBody: string
+  - certificationDate: date
+  + verify(): boolean
+  + getBadge(): string
+  + getDetails(): object
+}
+
+class Reservation {
+  - id: int
+  - userId: int
+  - restaurantId: int
+  - date: date
+  - time: string
+  - guests: int
+  - serviceType: ServiceType
+  - specialRequests: string
+  - status: ReservationStatus
+  - createdAt: datetime
+  - statusUpdatedAt: datetime
+  + create(): boolean
+  + updateStatus(status: ReservationStatus): boolean
+  + cancel(): boolean
+}
+
+' ========= Services métier =========
+class ReservationService {
+  + createReservation(client: Client, restaurant: Restaurant, r: Reservation): boolean
+  + changeStatus(owner: RestaurantOwner, reservationId: int, status: ReservationStatus): boolean
+  + cancel(client: Client, reservationId: int): boolean
+  + listForClient(clientId: int): Reservation[*]
+  + listForRestaurant(restaurantId: int): Reservation[*]
+}
+
+class CertificationService {
+  + isRestaurantEligible(r: Restaurant): boolean
+}
+
+' ========= Relations =========
+User <|-- Client
+User <|-- RestaurantOwner
+
+Restaurant "1" *-- "1" CertificationHalal
+Client "1" -- "0..*" Reservation : crée >
+Restaurant "1" -- "0..*" Reservation : reçoit >
+RestaurantOwner "1" -- "1" Restaurant : gère >
+RestaurantOwner "1" -- "0..*" Reservation : traite >
+
+ReservationService ..> Reservation
+ReservationService ..> Restaurant
+ReservationService ..> Client
+ReservationService ..> RestaurantOwner
+CertificationService ..> Restaurant
+CertificationService ..> CertificationHalal
+
+note right of CertificationHalal
+Tous les restaurants doivent avoir une certification Halal valide
+pour être listés/filtrés.
+end note
+
+note bottom of Reservation
+Statuts: PENDING -> CONFIRMED/REFUSED, et CANCELLED par le client.
+end note
+
+@enduml

@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documentation Technique - Allo-Halal</title>
+    <link rel="stylesheet" href="info-style.css">
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <h1>📚 Documentation Technique</h1>
+            <p>Diagrammes de séquence - Application Allo-Halal</p>
+            <a href="index.html" class="back-btn">← Retour à l'accueil</a>
+        </div>
+    </header>
+
+    <nav class="toc">
+        <h2>Table des matières</h2>
+        <ul>
+            <li><a href="#auth">Authentification</a>
+                <ul>
+                    <li><a href="#inscription">Inscription</a></li>
+                    <li><a href="#connexion">Connexion</a></li>
+                    <li><a href="#deconnexion">Déconnexion</a></li>
+                    <li><a href="#modification">Modification du profil</a></li>
+                    <li><a href="#suppression">Suppression du compte</a></li>
+                </ul>
+            </li>
+            <li><a href="#reservations">Réservations</a>
+                <ul>
+                    <li><a href="#creation">Création</a></li>
+                    <li><a href="#annulation">Annulation (Client)</a></li>
+                    <li><a href="#acceptation">Acceptation (Restaurant)</a></li>
+                    <li><a href="#refus">Refus (Restaurant)</a></li>
+                </ul>
+            </li>
+        </ul>
+    </nav>
+
+    <main>
+        <section id="intro" class="section">
+            <h2>Introduction</h2>
+            <p>Cette page présente l'ensemble des diagrammes de séquence de l'application Allo-Halal, une plateforme de réservation de restaurants halal à Dijon et ses environs.</p>
+
+            <div class="info-box">
+                <h3>🎯 Objectif de l'application</h3>
+                <p>Permettre aux clients de réserver facilement dans des restaurants halal certifiés, et aux restaurateurs de gérer leurs réservations en temps réel.</p>
+            </div>
+
+            <div class="tech-stack">
+                <h3>🛠️ Technologies utilisées</h3>
+                <ul>
+                    <li><strong>Frontend :</strong> HTML5, CSS3, JavaScript (Vanilla)</li>
+                    <li><strong>Backend :</strong> Node.js, Express.js</li>
+                    <li><strong>Base de données :</strong> SQLite (better-sqlite3)</li>
+                    <li><strong>Sécurité :</strong> bcrypt (hashage des mots de passe)</li>
+                    <li><strong>Carte interactive :</strong> Leaflet.js + OpenStreetMap</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="auth" class="section">
+            <h2>🔐 Diagrammes d'Authentification</h2>
+
+            <article id="inscription" class="diagram-article">
+                <h3>1. Inscription d'un nouveau utilisateur</h3>
+                <div class="diagram-description">
+                    <p><strong>Description :</strong> Processus complet d'inscription d'un nouveau client ou restaurant.</p>
+                    <p><strong>Acteurs :</strong> Utilisateur, Interface Web, AuthService, API Backend, Base de données, SessionManager</p>
+                    <p><strong>Cas d'erreur gérés :</strong></p>
+                    <ul>
+                        <li>Champs invalides ou manquants</li>
+                        <li>Email déjà existant dans la base</li>
+                    </ul>
+                    <p><strong>Résultat :</strong> Compte créé + connexion automatique + son de bienvenue + redirection vers l'accueil</p>
+                </div>
+                <div class="diagram-container">
+                    <img src="diagramme/sequences-authentification.png" alt="Diagramme d'inscription">
+                </div>
+            </article>
+
+            <article id="connexion" class="diagram-article">
+                <h3>2. Connexion</h3>
+                <div class="diagram-description">
+                    <p><strong>Description :</strong> Connexion d'un utilisateur existant avec gestion de la persistance de session.</p>
+                    <p><strong>Options :</strong> "Se souvenir de moi" (localStorage) ou session temporaire (sessionStorage)</p>
+                    <p><strong>Cas d'erreur gérés :</strong></p>
+                    <ul>
+                        <li>Champs vides</li>
+                        <li>Email non trouvé</li>
+                        <li>Mot de passe incorrect</li>
+                    </ul>
+                    <p><strong>Sécurité :</strong> Vérification avec bcrypt.compare()</p>
+                </div>
+                <div class="diagram-container">
+                    <img src="diagramme/sequences-connexion.png" alt="Diagramme de connexion">
+                </div>
+            </article>
+
+            <article id="deconnexion" class="diagram-article">
+                <h3>3. Déconnexion</h3>
+                <div class="diagram-description">
+                    <p><strong>Description :</strong> Déconnexion simple de l'utilisateur.</p>
+                    <p><strong>Action :</strong> Suppression de la session (localStorage + sessionStorage) et rechargement de la page</p>
+                </div>
+                <div class="diagram-container">
+                    <img src="diagramme/sequences-deconnexion.png" alt="Diagramme de déconnexion">
+                </div>
+            </article>
+
+            <article id="modification" class="diagram-article">
+                <h3>4. Modification du profil</h3>
+                <div class="diagram-description">
+                    <p><strong>Description :</strong> Modification du nom, email et/ou mot de passe de l'utilisateur.</p>
+                    <p><strong>Cas d'erreur gérés :</strong></p>
+                    <ul>
+                        <li>Utilisateur non connecté</li>
+                        <li>Utilisateur non trouvé</li>
+                        <li>Mot de passe actuel manquant (si changement de mdp)</li>
+                        <li>Mot de passe actuel incorrect</li>
+                    </ul>
+                    <p><strong>Sécurité :</strong> Vérification du mot de passe actuel avant de permettre le changement</p>
+                </div>
+                <div class="diagram-container">
+                    <img src="diagramme/sequences-modification-profil.png" alt="Diagramme de modification du profil">
+                </div>
+            </article>
+
+            <article id="suppression" class="diagram-article">
+                <h3>5. Suppression du compte</h3>
+                <div class="diagram-description">
+                    <p><strong>Description :</strong> Suppression définitive du compte utilisateur.</p>
+                    <p><strong>Sécurité :</strong> Confirmation obligatoire avant suppression</p>
+                    <p><strong>Résultat :</strong> Compte supprimé + déconnexion automatique + redirection vers l'accueil</p>
+                </div>
+                <div class="diagram-container">
+                    <img src="diagramme/sequences-suppression-compte.png" alt="Diagramme de suppression du compte">
+                </div>
+            </article>
+        </section>
+
+        <section id="reservations" class="section">
+            <h2>📅 Diagrammes de Gestion des Réservations</h2>
+
+            <article id="creation" class="diagram-article">
+                <h3>6. Création d'une réservation</h3>
+                <div class="diagram-description">
+                    <p><strong>Description :</strong> Processus complet de création d'une réservation par un client.</p>
+                    <p><strong>Prérequis :</strong> L'utilisateur doit être connecté</p>
+                    <p><strong>Informations requises :</strong></p>
+                    <ul>
+                        <li>Type de service (sur place / à emporter)</li>
+                        <li>Date et heure</li>
+                        <li>Nombre de personnes</li>
+                        <li>Nom, téléphone, email</li>
+                        <li>Demandes spéciales (optionnel)</li>
+                    </ul>
+                    <p><strong>Résultat :</strong> Réservation créée avec statut "pending" (en attente de validation par le restaurant)</p>
+                </div>
+                <div class="diagram-container">
+                    <img src="diagramme/sequences-creation-reservation.png" alt="Diagramme de création de réservation">
+                </div>
+            </article>
+
+            <article id="annulation" class="diagram-article">
+                <h3>7. Annulation d'une réservation (Client)</h3>
+                <div class="diagram-description">
+                    <p><strong>Description :</strong> Annulation d'une réservation par le client.</p>
+                    <p><strong>Sécurité :</strong> Confirmation demandée avant annulation</p>
+                    <p><strong>Résultat :</strong> Statut de la réservation changé en "cancelled" + liste actualisée</p>
+                </div>
+                <div class="diagram-container">
+                    <img src="diagramme/sequences-annulation-reservation.png" alt="Diagramme d'annulation de réservation">
+                </div>
+            </article>
+
+            <article id="acceptation" class="diagram-article">
+                <h3>8. Acceptation d'une réservation (Restaurant)</h3>
+                <div class="diagram-description">
+                    <p><strong>Description :</strong> Acceptation d'une réservation par le restaurateur.</p>
+                    <p><strong>Contrôles d'accès :</strong></p>
+                    <ul>
+                        <li>Utilisateur doit être connecté</li>
+                        <li>Utilisateur doit avoir le rôle "restaurant"</li>
+                        <li>Utilisateur doit avoir un restaurantId associé</li>
+                    </ul>
+                    <p><strong>Résultat :</strong> Statut changé en "confirmed" + notification au client</p>
+                </div>
+                <div class="diagram-container">
+                    <img src="diagramme/sequences-gestion-reservation-restaurant.png" alt="Diagramme d'acceptation de réservation">
+                </div>
+            </article>
+
+            <article id="refus" class="diagram-article">
+                <h3>9. Refus d'une réservation (Restaurant)</h3>
+                <div class="diagram-description">
+                    <p><strong>Description :</strong> Refus d'une réservation par le restaurateur.</p>
+                    <p><strong>Sécurité :</strong> Confirmation demandée avant refus</p>
+                    <p><strong>Résultat :</strong> Statut changé en "refused" + notification au client</p>
+                </div>
+                <div class="diagram-container">
+                    <img src="diagramme/sequences-refus-reservation-restaurant.png" alt="Diagramme de refus de réservation">
+                </div>
+            </article>
+        </section>
+
+        <section id="statuts" class="section">
+            <h2>📊 Statuts des réservations</h2>
+            <div class="status-grid">
+                <div class="status-card pending">
+                    <h3>🟡 Pending</h3>
+                    <p>En attente de validation par le restaurant</p>
+                </div>
+                <div class="status-card confirmed">
+                    <h3>🟢 Confirmed</h3>
+                    <p>Acceptée par le restaurant</p>
+                </div>
+                <div class="status-card refused">
+                    <h3>🔴 Refused</h3>
+                    <p>Refusée par le restaurant</p>
+                </div>
+                <div class="status-card cancelled">
+                    <h3>⚫ Cancelled</h3>
+                    <p>Annulée par le client</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="securite" class="section">
+            <h2>🔒 Architecture de sécurité</h2>
+
+            <div class="security-section">
+                <h3>Hashage des mots de passe</h3>
+                <ul>
+                    <li>Utilisation de <code>bcrypt</code> avec un coût de 10</li>
+                    <li>Les mots de passe ne sont <strong>jamais</strong> stockés en clair</li>
+                    <li>Comparaison sécurisée avec <code>bcrypt.compare()</code></li>
+                </ul>
+            </div>
+
+            <div class="security-section">
+                <h3>Gestion des sessions</h3>
+                <ul>
+                    <li><strong>localStorage :</strong> Session persistante (si "Se souvenir de moi")</li>
+                    <li><strong>sessionStorage :</strong> Session temporaire (fermée à la fermeture du navigateur)</li>
+                    <li><strong>Contenu :</strong> {userId, userName, userEmail, userRole, restaurantId, isLoggedIn, loginTime}</li>
+                </ul>
+            </div>
+
+            <div class="security-section">
+                <h3>Contrôles d'accès</h3>
+                <ul>
+                    <li>Pages client : vérification du rôle "client"</li>
+                    <li>Pages restaurant : vérification du rôle "restaurant" + restaurantId</li>
+                    <li>API : validation des données côté serveur</li>
+                    <li>Base de données : contraintes d'intégrité (FOREIGN KEY, CHECK)</li>
+                </ul>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 Allo-Halal - Documentation Technique</p>
+    </footer>
+</body>
+</html>

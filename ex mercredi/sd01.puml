@@ -1,0 +1,28 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam ParticipantPadding 20
+skinparam BoxPadding 8
+skinparam roundcorner 4
+skinparam sequenceGroupBorderColor #1e6fa0
+skinparam sequenceGroupBackgroundColor #e8f4f8
+
+title SD 01 — Ajout d'un nouveau client
+
+actor Utilisateur
+participant ":Banque" as Banque
+participant ":Client" as Client <<create>>
+
+Utilisateur -> Banque : AjoutClient(nom : string, adresse : string)
+activate Banque
+
+create Client
+Banque -> Client : <<create>> new Client(nom, adresse)
+activate Client
+Client --> Banque : client
+deactivate Client
+
+Banque --> Utilisateur : ok
+deactivate Banque
+
+note over Banque : Le client est ajouté à la liste\ndes clients de la Banque.
+@enduml

@@ -1,0 +1,67 @@
+@startuml
+title Diagramme de séquence - Connexion
+
+actor "Utilisateur" as U
+participant "Interface Web" as IW
+participant "AuthService" as AS
+participant "API Backend" as API
+participant "Base de données" as DB
+participant "SessionManager" as SM
+
+== Connexion d'un utilisateur ==
+U -> IW : SaisiEmail(email)
+U -> IW : SaisiMotDePasse(mdp)
+U -> IW : CocheRememberMe(true/false)
+U -> IW : ClicConnexion()
+activate IW
+
+IW -> IW : ValiderChamps()
+alt Champs vides
+  IW --> U : Erreur("Veuillez remplir tous les champs")
+else Champs remplis
+  IW -> AS : login(email, mdp)
+  activate AS
+  AS -> API : POST /api/auth/login {email, password}
+  activate API
+
+  API -> DB : SELECT * FROM users WHERE email = ?
+  activate DB
+  DB --> API : user
+  deactivate DB
+
+  alt Utilisateur non trouvé
+    API --> AS : Erreur("Email ou mot de passe incorrect")
+    AS --> IW : Erreur
+    IW --> U : Erreur("Email ou mot de passe incorrect")
+  else Utilisateur trouvé
+    API -> API : bcrypt.compare(mdp, user.password)
+    alt Mot de passe incorrect
+      API --> AS : Erreur("Email ou mot de passe incorrect")
+      AS --> IW : Erreur
+      IW --> U : Erreur("Email ou mot de passe incorrect")
+    else Mot de passe correct
+      API --> AS : {userId, userName, userEmail, userRole, restaurantId}
+      deactivate API
+      AS --> IW : user
+      deactivate AS
+
+      IW -> SM : login(user, rememberMe)
+      activate SM
+      SM -> SM : créerSession(user)
+      alt rememberMe == true
+        SM -> SM : localStorage.setItem("userSession", session)
+      else rememberMe == false
+        SM -> SM : sessionStorage.setItem("userSession", session)
+      end
+      SM --> IW : session créée
+      deactivate SM
+
+      IW --> U : "Connexion réussie ! Bienvenue " + userName
+      IW -> IW : setTimeout(1500ms)
+      IW -> U : Redirection vers index.html
+    end
+  end
+end
+deactivate IW
+
+@enduml
